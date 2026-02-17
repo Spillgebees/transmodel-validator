@@ -3,20 +3,25 @@
  *
  * Parses the NeTEx XSD schema to extract `xsd:unique` constraints, then
  * validates that no duplicate values exist for the constrained fields
- * **within each document independently**.
+ * using a two-pass approach:
  *
- * Per W3C XSD §3.11.4, identity constraints evaluate with the declaring
- * element as context node. In NeTEx the unique constraints are declared on
- * `PublicationDelivery` (one per file), so uniqueness is enforced
- * per-document — not across the entire dataset.
+ * - **Pass 1 (per-document):** Enforces uniqueness within each document
+ *   independently, per W3C XSD §3.11.4 semantics. In NeTEx the unique
+ *   constraints are declared on `PublicationDelivery` (one per file),
+ *   so uniqueness is enforced per-document. Also accumulates element
+ *   keys per-frame for cross-prerequisite checking.
+ *
+ * - **Pass 2 (cross-prerequisite):** Uses `buildPrerequisiteGraph()` to
+ *   find frames linked via `<prerequisites>`. For each frame that
+ *   declares prerequisites, checks that no key appears in both the
+ *   declaring frame and its prerequisite frames.
  *
  * Cross-document referential integrity is handled separately by the
  * `netexKeyRefConstraints` rule.
  *
  * NOTE: This rule requires the XSD content to be provided via the
  * `xsdContent` config key. It remains in `CROSS_DOC_RULES` in
- * `validate.ts` so that the orchestrator supplies `xsdContent`, even
- * though uniqueness is checked per-document.
+ * `validate.ts` so that the orchestrator supplies `xsdContent`.
  */
 
 import { consistencyError, skippedInfo } from "../../errors.js";
@@ -26,6 +31,8 @@ import type {
   RuleConfig,
   ValidationError,
 } from "../../types.js";
+import type { FrameInfo } from "../../xml/frames.js";
+import { findAllFrames } from "../../xml/frames.js";
 import { findAll, getAttr } from "../../xml/helpers.js";
 
 const RULE_NAME = "netexUniqueConstraints";
@@ -41,7 +48,7 @@ export const netexUniqueConstraints: Rule = {
   name: RULE_NAME,
   displayName: "Uniqueness constraints",
   description:
-    "Validates `xsd:unique` constraints from the NeTEx schema \u2014 no duplicate keys within each document.",
+    "Validates `xsd:unique` constraints from the NeTEx schema \u2014 no duplicate keys within each document, and across frames linked by `<prerequisites>`.",
   formats: ["netex"],
 
   async run(
@@ -61,13 +68,45 @@ export const netexUniqueConstraints: Rule = {
     const errors: ValidationError[] = [];
     const constraints = parseUniqueConstraints(xsdContent);
 
-    // NOTE: Per W3C XSD §3.11.4, identity constraints evaluate with the
-    // declaring element as context node. In NeTEx the `xsd:unique`
-    // constraints are declared on `PublicationDelivery` (one per file),
-    // so uniqueness is enforced per-document — not across the entire
-    // dataset. The `seen` map is therefore reset for each document.
+    // Pre-cache frames per document (parsed once, reused across constraints).
+    const framesPerDoc = new Map<string, FrameInfo[]>();
+    for (const doc of documents) {
+      framesPerDoc.set(doc.fileName, findAllFrames(doc.xml, doc.fileName));
+    }
+
+    // Build prerequisite graph once from the cached frames.
+    const graph = new Map<string, Set<string>>();
+    for (const docFrames of framesPerDoc.values()) {
+      for (const frame of docFrames) {
+        const prereqIds = new Set<string>();
+        for (const prereq of frame.prerequisites) {
+          prereqIds.add(prereq.ref);
+        }
+        graph.set(frame.id, prereqIds);
+      }
+    }
+
+    // Pass 1: per-document uniqueness (existing behavior).
+    // Also accumulate per-frame key sets for cross-prerequisite checking.
+    // Map: constraintName → frameId → { keys, fileName }
+    const frameKeySets = new Map<
+      string,
+      Map<string, { keys: Set<string>; fileName: string }>
+    >();
+
     for (const constraint of constraints) {
+      const perFrame = new Map<
+        string,
+        { keys: Set<string>; fileName: string }
+      >();
+      frameKeySets.set(constraint.name, perFrame);
+
       for (const doc of documents) {
+        // NOTE: Per W3C XSD §3.11.4, identity constraints evaluate with
+        // the declaring element as context node. In NeTEx the `xsd:unique`
+        // constraints are declared on `PublicationDelivery` (one per file),
+        // so uniqueness is enforced per-document — not across the entire
+        // dataset. The `seen` map is therefore reset for each document.
         const seen = new Map<string, true>();
         const elements = findByXsdSelector(doc.xml, constraint.selector);
 
@@ -82,10 +121,67 @@ export const netexUniqueConstraints: Rule = {
                 RULE_NAME,
                 `Duplicate value violates unique constraint \`${constraint.name}\` (key: \`${key}\`)`,
                 el.line,
+                doc.fileName,
               ),
             );
           } else {
             seen.set(key, true);
+          }
+        }
+
+        // Accumulate keys per frame for cross-prerequisite checking.
+        const docFrames = framesPerDoc.get(doc.fileName) ?? [];
+        for (const frame of docFrames) {
+          const frameElements = findByXsdSelector(
+            frame.innerXml,
+            constraint.selector,
+          );
+          const frameKeys = new Set<string>();
+          for (const el of frameElements) {
+            const key = constraint.fields
+              .map((f) => resolveField(el, f))
+              .join(";");
+            frameKeys.add(key);
+          }
+          if (frameKeys.size > 0) {
+            perFrame.set(frame.id, {
+              keys: frameKeys,
+              fileName: doc.fileName,
+            });
+          }
+        }
+      }
+    }
+
+    // Pass 2: cross-prerequisite uniqueness.
+    // For frames linked by prerequisites, check that no key appears in both
+    // the declaring frame and its prerequisite frames.
+    for (const constraint of constraints) {
+      const perFrame = frameKeySets.get(constraint.name);
+      if (!perFrame) continue;
+
+      for (const [frameId, prereqIds] of graph) {
+        const frameData = perFrame.get(frameId);
+        if (!frameData) continue;
+        if (prereqIds.size === 0) continue;
+
+        for (const prereqId of prereqIds) {
+          const prereqData = perFrame.get(prereqId);
+          if (!prereqData) continue;
+
+          // Find keys that appear in both the frame and its prerequisite.
+          for (const key of frameData.keys) {
+            if (prereqData.keys.has(key)) {
+              errors.push(
+                consistencyError(
+                  RULE_NAME,
+                  `Duplicate value across prerequisite-linked frames violates unique constraint \`${constraint.name}\` ` +
+                    `(key: \`${key}\`, frames: \`${frameId}\` and \`${prereqId}\`)`,
+                  undefined,
+                  frameData.fileName,
+                ),
+              );
+            }
           }
         }
       }

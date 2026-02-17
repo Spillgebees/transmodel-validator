@@ -2,11 +2,13 @@
  * Tests for the netexUniqueConstraints rule.
  *
  * Verifies that XSD unique constraints are enforced within individual
- * documents (per W3C XSD scoping rules).
+ * documents (per W3C XSD scoping rules) and across frames linked by
+ * `<prerequisites>`.
  */
 
 import { describe, expect, it } from "vitest";
 
+import type { DocumentInput } from "../../types.js";
 import { netexUniqueConstraints } from "./netexUniqueConstraints.js";
 import { doc, netex } from "./testHelpers.js";
 
@@ -116,5 +118,127 @@ describe("netexUniqueConstraints", () => {
       xsdContent: UNIQUE_XSD,
     });
     expect(errors).toHaveLength(0);
+  });
+
+  it("detects duplicate across prerequisite-linked frames", async () => {
+    // arrange
+    const docA: DocumentInput = {
+      fileName: "a.xml",
+      xml: `<PublicationDelivery>
+        <dataObjects>
+          <ResourceFrame id="RF:1">
+            <StopPlace id="SP1" />
+          </ResourceFrame>
+        </dataObjects>
+      </PublicationDelivery>`,
+    };
+    const docB: DocumentInput = {
+      fileName: "b.xml",
+      xml: `<PublicationDelivery>
+        <dataObjects>
+          <ServiceFrame id="SF:1">
+            <prerequisites>
+              <ResourceFrameRef ref="RF:1" />
+            </prerequisites>
+            <StopPlace id="SP1" />
+          </ServiceFrame>
+        </dataObjects>
+      </PublicationDelivery>`,
+    };
+
+    // act
+    const errors = await netexUniqueConstraints.run([docA, docB], {
+      xsdContent: UNIQUE_XSD,
+    });
+
+    // assert — cross-prerequisite duplicate detected, attributed to declaring frame's file
+    expect(errors).toHaveLength(1);
+    expect(errors[0].severity).toBe("error");
+    expect(errors[0].category).toBe("consistency");
+    expect(errors[0].message).toContain("prerequisite-linked frames");
+    expect(errors[0].message).toContain("SF:1");
+    expect(errors[0].message).toContain("RF:1");
+    expect(errors[0].fileName).toBe("b.xml");
+  });
+
+  it("allows identical elements across unrelated frames (no prerequisites)", async () => {
+    // arrange
+    const docA: DocumentInput = {
+      fileName: "a.xml",
+      xml: `<PublicationDelivery>
+        <dataObjects>
+          <ResourceFrame id="RF:1">
+            <StopPlace id="SP1" />
+          </ResourceFrame>
+        </dataObjects>
+      </PublicationDelivery>`,
+    };
+    const docB: DocumentInput = {
+      fileName: "b.xml",
+      xml: `<PublicationDelivery>
+        <dataObjects>
+          <ServiceFrame id="SF:1">
+            <StopPlace id="SP1" />
+          </ServiceFrame>
+        </dataObjects>
+      </PublicationDelivery>`,
+    };
+
+    // act
+    const errors = await netexUniqueConstraints.run([docA, docB], {
+      xsdContent: UNIQUE_XSD,
+    });
+
+    // assert — independent frames can have overlapping IDs
+    expect(errors).toHaveLength(0);
+  });
+
+  it("detects per-document duplicate and cross-prerequisite duplicate independently", async () => {
+    // arrange
+    const docA: DocumentInput = {
+      fileName: "a.xml",
+      xml: `<PublicationDelivery>
+        <dataObjects>
+          <ResourceFrame id="RF:1">
+            <StopPlace id="SP1" />
+            <StopPlace id="SP1" />
+          </ResourceFrame>
+        </dataObjects>
+      </PublicationDelivery>`,
+    };
+    const docB: DocumentInput = {
+      fileName: "b.xml",
+      xml: `<PublicationDelivery>
+        <dataObjects>
+          <ServiceFrame id="SF:1">
+            <prerequisites>
+              <ResourceFrameRef ref="RF:1" />
+            </prerequisites>
+            <StopPlace id="SP1" />
+          </ServiceFrame>
+        </dataObjects>
+      </PublicationDelivery>`,
+    };
+
+    // act
+    const errors = await netexUniqueConstraints.run([docA, docB], {
+      xsdContent: UNIQUE_XSD,
+    });
+
+    // assert — one per-document duplicate in doc A, one cross-prerequisite duplicate
+    expect(errors).toHaveLength(2);
+    const perDocError = errors.find(
+      (e) => !e.message.includes("prerequisite-linked"),
+    );
+    const crossPrereqError = errors.find((e) =>
+      e.message.includes("prerequisite-linked"),
+    );
+    expect(perDocError).toBeDefined();
+    expect(perDocError!.message).toContain("UniqueStopPlaceId");
+    expect(perDocError!.fileName).toBe("a.xml");
+    expect(crossPrereqError).toBeDefined();
+    expect(crossPrereqError!.message).toContain("SF:1");
+    expect(crossPrereqError!.message).toContain("RF:1");
+    expect(crossPrereqError!.fileName).toBe("b.xml");
   });
 });
