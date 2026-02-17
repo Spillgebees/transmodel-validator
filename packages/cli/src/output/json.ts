@@ -2,7 +2,7 @@
  * JSON output formatter.
  */
 
-import type { ValidationResult } from "@transmodel-validator/core";
+import type { ValidationResult } from "@transmodel-validator/shared";
 
 export function formatJson(result: ValidationResult): string {
   return JSON.stringify(result, null, 2);

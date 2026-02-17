@@ -1,49 +1,20 @@
 /**
- * Client-side types for the web UI.
+ * Types for the web UI.
  *
- * Types are duplicated from core to avoid importing Node.js code into
- * the browser bundle.
+ * Shared types (ValidationError, FileResult, etc.) are imported from
+ * @transmodel-validator/shared. Web-specific types are defined here.
  */
 
-/** A single validation error. */
-export interface ValidationError {
-  message: string;
-  source: "xsd" | "rule";
-  severity: "error" | "warning" | "info";
-  category: "consistency" | "quality" | "not-found" | "skipped" | "general";
-  rule?: string;
-  line?: number;
-  column?: number;
-}
+import type { ValidationResult } from "@transmodel-validator/shared";
 
-/** Validation result for a single file. */
-export interface FileResult {
-  fileName: string;
-  format: "netex" | "siri";
-  errors: ValidationError[];
-  passed: boolean;
-  /**
-   * Names of all rules/checks that were executed against this file.
-   * Includes "xsd" if XSD validation was run. Used to derive which
-   * rules passed (rulesRun minus rules that produced errors/skipped).
-   */
-  rulesRun?: string[];
-  /**
-   * Wall-clock duration of each rule/check, in milliseconds.
-   * Keys match entries in `rulesRun` (e.g. rule name or "xsd").
-   */
-  ruleTiming?: Record<string, number>;
-}
+// Re-export shared types that web components use.
+export type {
+  FileResult,
+  ValidationError,
+  ValidationResult,
+} from "@transmodel-validator/shared";
 
-/** Aggregate validation result for an entire session. */
-export interface ValidationResult {
-  files: FileResult[];
-  totalFiles: number;
-  passedFiles: number;
-  failedFiles: number;
-  totalErrors: number;
-  durationMs: number;
-}
+// Web-specific types below.
 
 /**
  * Sparse line map for a single file: line number (1-indexed) -> line content.

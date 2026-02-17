@@ -1,5 +1,5 @@
 /**
- * Factory functions for creating validation errors.
+ * Error factory functions for creating structured validation errors.
  *
  * Mirrors the Greenlight error types:
  * - ConsistencyError → structural / referential integrity issues

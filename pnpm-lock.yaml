@@ -17,6 +17,9 @@ importers:
       '@transmodel-validator/core':
         specifier: workspace:*
         version: link:../core
+      '@transmodel-validator/shared':
+        specifier: workspace:*
+        version: link:../shared
     devDependencies:
       '@types/node':
         specifier: ^25.2.3
@@ -30,6 +33,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@transmodel-validator/shared':
+        specifier: workspace:*
+        version: link:../shared
       libxml2-wasm:
         specifier: ^0.6.0
         version: 0.6.0
@@ -37,6 +43,15 @@ importers:
       '@types/node':
         specifier: ^25.2.3
         version: 25.2.3
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@25.2.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
+
+  packages/shared:
+    devDependencies:
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
@@ -55,6 +70,9 @@ importers:
       '@transmodel-validator/core':
         specifier: workspace:*
         version: link:../core
+      '@transmodel-validator/shared':
+        specifier: workspace:*
+        version: link:../shared
       nitro:
         specifier: npm:nitro-nightly@3.0.1-20260213-154614-f663e76d
         version: nitro-nightly@3.0.1-20260213-154614-f663e76d(jiti@2.6.1)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0))

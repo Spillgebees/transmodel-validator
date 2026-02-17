@@ -4,7 +4,7 @@
  * Outputs results as a simple XML report.
  */
 
-import type { ValidationResult } from "@transmodel-validator/core";
+import type { ValidationResult } from "@transmodel-validator/shared";
 
 export function formatXml(result: ValidationResult): string {
   const lines: string[] = [];

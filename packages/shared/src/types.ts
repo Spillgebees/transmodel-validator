@@ -1,8 +1,9 @@
 /**
- * Shared types for the transmodel-validator core.
+ * Shared types for the transmodel-validator project.
  */
 
-import type { TransmodelFormat } from "./formats/detect.js";
+/** Detected Transmodel XML format. */
+export type TransmodelFormat = "netex" | "siri";
 
 /** Severity / category of a validation error. */
 export type ErrorSeverity = "error" | "warning" | "info";

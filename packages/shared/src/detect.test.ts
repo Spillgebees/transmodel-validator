@@ -1,5 +1,8 @@
-import { describe, expect, it } from "vitest";
+/**
+ * Tests for the format detection utility.
+ */
 
+import { describe, expect, it } from "vitest";
 import { detectFormat } from "./detect.js";
 
 describe("detectFormat", () => {

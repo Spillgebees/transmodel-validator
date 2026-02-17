@@ -5,7 +5,7 @@
  * file, format, rule, severity, category, line, column, message
  */
 
-import type { ValidationResult } from "@transmodel-validator/core";
+import type { ValidationResult } from "@transmodel-validator/shared";
 
 const HEADER = "file,format,rule,severity,category,line,column,message";
 

@@ -2,7 +2,7 @@
  * Rule registry — central index of all available business rules.
  */
 
-import type { Rule } from "../types.js";
+import type { Rule } from "@transmodel-validator/shared";
 
 // NeTEx rules
 import { everyLineIsReferenced } from "./netex/everyLineIsReferenced.js";
@@ -50,26 +50,6 @@ export const RULE_REGISTRY: ReadonlyMap<string, Rule> = new Map<string, Rule>([
   [netexPrerequisitesAreSatisfied.name, netexPrerequisitesAreSatisfied],
   [netexUniqueConstraints.name, netexUniqueConstraints],
 ]);
-
-/** All NeTEx rule names. */
-export const NETEX_RULE_NAMES: readonly string[] = [
-  everyLineIsReferenced.name,
-  everyStopPlaceHasAName.name,
-  everyStopPlaceHasACorrectStopPlaceType.name,
-  everyStopPlaceIsReferenced.name,
-  everyStopPointHasArrivalAndDepartureTime.name,
-  everyScheduledStopPointHasAName.name,
-  stopPlaceQuayDistanceIsReasonable.name,
-  frameDefaultsHaveALocaleAndTimeZone.name,
-  locationsAreReferencingTheSamePoint.name,
-  passingTimesIsNotDecreasing.name,
-  netexKeyRefConstraints.name,
-  netexPrerequisitesAreSatisfied.name,
-  netexUniqueConstraints.name,
-];
-
-/** All SIRI rule names (empty for now). */
-export const SIRI_RULE_NAMES: readonly string[] = [];
 
 /** Get a rule by name. Throws if not found. */
 export function getRule(name: string): Rule {

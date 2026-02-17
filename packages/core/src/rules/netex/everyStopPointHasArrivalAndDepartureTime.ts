@@ -7,8 +7,12 @@
  * - Intermediate stops need both ArrivalTime and DepartureTime.
  */
 
-import { consistencyError } from "../../errors.js";
-import type { DocumentInput, Rule, ValidationError } from "../../types.js";
+import type {
+  DocumentInput,
+  Rule,
+  ValidationError,
+} from "@transmodel-validator/shared";
+import { consistencyError } from "@transmodel-validator/shared";
 import {
   findChildren,
   getAttr,

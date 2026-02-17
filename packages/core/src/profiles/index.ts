@@ -2,8 +2,11 @@
  * Predefined validation profiles.
  */
 
-import { NETEX_RULE_NAMES, SIRI_RULE_NAMES } from "../rules/registry.js";
-import type { Profile } from "../types.js";
+import type { Profile } from "@transmodel-validator/shared";
+import {
+  NETEX_RULE_NAMES,
+  SIRI_RULE_NAMES,
+} from "@transmodel-validator/shared";
 
 // ── NeTEx profiles ──────────────────────────────────────────────────────
 

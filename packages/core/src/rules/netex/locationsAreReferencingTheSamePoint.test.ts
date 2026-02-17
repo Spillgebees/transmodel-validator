@@ -5,9 +5,8 @@
  * by PassengerStopAssignment are within a reasonable distance.
  */
 
+import type { DocumentInput } from "@transmodel-validator/shared";
 import { describe, expect, it } from "vitest";
-
-import type { DocumentInput } from "../../types.js";
 import { locationsAreReferencingTheSamePoint } from "./locationsAreReferencingTheSamePoint.js";
 import { doc, netex, netexFlat } from "./testHelpers.js";
 

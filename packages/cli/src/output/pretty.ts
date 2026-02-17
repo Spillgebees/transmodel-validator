@@ -2,7 +2,7 @@
  * Pretty-printed terminal output formatter.
  */
 
-import type { ValidationResult } from "@transmodel-validator/core";
+import type { ValidationResult } from "@transmodel-validator/shared";
 
 // ANSI color codes
 const RESET = "\x1b[0m";

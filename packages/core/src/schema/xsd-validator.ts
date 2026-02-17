@@ -17,6 +17,8 @@
  * fs-based provider would require for large schema trees like NeTEx (372 files).
  */
 
+import type { ValidationError } from "@transmodel-validator/shared";
+import { xsdError } from "@transmodel-validator/shared";
 import {
   ParseOption,
   XmlBufferInputProvider,
@@ -26,10 +28,7 @@ import {
   xmlRegisterInputProvider,
 } from "libxml2-wasm";
 import { xmlRegisterFsInputProviders } from "libxml2-wasm/lib/nodejs.mjs";
-
-import { xsdError } from "../errors.js";
 import { createLogger } from "../logger.js";
-import type { ValidationError } from "../types.js";
 
 const log = createLogger("xsd-validator");
 

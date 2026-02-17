@@ -8,13 +8,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { InlineMarkdown } from "~/components/InlineMarkdown";
-import type { RuleInfo, SchemaVersionOption } from "~/lib/constants";
+import type { RuleDescriptor, SchemaVersionDescriptor } from "~/lib/constants";
 import {
+  NETEX_RULE_DESCRIPTORS,
   NETEX_RULE_NAMES,
-  NETEX_RULES,
   SCHEMA_VERSIONS,
+  SIRI_RULE_DESCRIPTORS,
   SIRI_RULE_NAMES,
-  SIRI_RULES,
 } from "~/lib/constants";
 import type { ValidationConfig } from "~/lib/types";
 import { listSchemaXsdFiles } from "~/lib/validation.functions";
@@ -40,9 +40,9 @@ function getSchemasForFormat(format: string) {
 }
 
 /** Returns rule metadata applicable to the selected format. */
-function getRulesForFormat(format: string): readonly RuleInfo[] {
-  if (format === "siri") return SIRI_RULES;
-  return NETEX_RULES; // auto defaults to NeTEx rules
+function getRulesForFormat(format: string): readonly RuleDescriptor[] {
+  if (format === "siri") return SIRI_RULE_DESCRIPTORS;
+  return NETEX_RULE_DESCRIPTORS; // auto defaults to NeTEx rules
 }
 
 /** Returns rule name strings applicable to the selected format. */
@@ -758,7 +758,7 @@ const SPECIAL_OPTIONS = [
 
 /** Resolves display label for a given schema ID. */
 function getSchemaLabel(
-  schemas: readonly SchemaVersionOption[],
+  schemas: readonly SchemaVersionDescriptor[],
   value: string,
 ): string {
   const special = SPECIAL_OPTIONS.find((o) => o.id === value);
@@ -770,7 +770,9 @@ function getSchemaLabel(
 }
 
 /** Returns true when the schemas span multiple formats (needs grouping). */
-function hasMultipleFormats(schemas: readonly SchemaVersionOption[]): boolean {
+function hasMultipleFormats(
+  schemas: readonly SchemaVersionDescriptor[],
+): boolean {
   const formats = new Set(schemas.map((s) => s.format));
   return formats.size > 1;
 }
@@ -784,7 +786,7 @@ function SchemaVersionPicker({
   value,
   onChange,
 }: {
-  schemas: readonly SchemaVersionOption[];
+  schemas: readonly SchemaVersionDescriptor[];
   value: string;
   onChange: (schemaId: string) => void;
 }) {

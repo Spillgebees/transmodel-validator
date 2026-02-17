@@ -15,7 +15,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@transmodel-validator/core": "workspace:*"
+    "@transmodel-validator/core": "workspace:*",
+    "@transmodel-validator/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.2.3",

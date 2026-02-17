@@ -6,7 +6,7 @@
  * multiple documents. Used by cross-document validation rules.
  */
 
-import type { DocumentInput } from "../types.js";
+import type { DocumentInput } from "@transmodel-validator/shared";
 import { findAll, findChildren, getAttr } from "./helpers.js";
 
 /** Describes a NeTEx VersionFrame found in a document. */

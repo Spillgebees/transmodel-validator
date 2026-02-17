@@ -6,11 +6,11 @@
  * CLI tool for validating NeTEx and SIRI XML files.
  */
 
+import { validate } from "@transmodel-validator/core";
 import type {
   TransmodelFormat,
   ValidateOptions,
-} from "@transmodel-validator/core";
-import { validate } from "@transmodel-validator/core";
+} from "@transmodel-validator/shared";
 
 import { type CliArgs, parseCliArgs, printUsage } from "./args.js";
 import { formatOutput } from "./output/index.js";

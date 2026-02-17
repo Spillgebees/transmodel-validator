@@ -15,13 +15,13 @@
  * ScheduledStopPoint uses Location/{Lat,Lon} (no Centroid wrapper).
  */
 
-import { consistencyError } from "../../errors.js";
 import type {
   DocumentInput,
   Rule,
   RuleConfig,
   ValidationError,
-} from "../../types.js";
+} from "@transmodel-validator/shared";
+import { consistencyError } from "@transmodel-validator/shared";
 import { haversineMeters } from "../../xml/geo.js";
 import {
   findChildren,

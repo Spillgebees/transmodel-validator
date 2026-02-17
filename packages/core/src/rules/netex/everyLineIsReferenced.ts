@@ -10,8 +10,12 @@
  * in separate files (which is valid in NeTEx).
  */
 
-import { consistencyError } from "../../errors.js";
-import type { DocumentInput, Rule, ValidationError } from "../../types.js";
+import type {
+  DocumentInput,
+  Rule,
+  ValidationError,
+} from "@transmodel-validator/shared";
+import { consistencyError } from "@transmodel-validator/shared";
 import { findAll, getAttr } from "../../xml/helpers.js";
 import { findNeTExElements, LINES } from "../../xml/paths.js";
 

@@ -14,6 +14,7 @@
     "@tanstack/react-router": "^1.159.5",
     "@tanstack/react-start": "^1.159.5",
     "@transmodel-validator/core": "workspace:*",
+    "@transmodel-validator/shared": "workspace:*",
     "nitro": "npm:nitro-nightly@3.0.1-20260213-154614-f663e76d",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

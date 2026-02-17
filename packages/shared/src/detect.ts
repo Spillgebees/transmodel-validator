@@ -1,5 +1,5 @@
 /**
- * Format detection for Transmodel XML files.
+ * Format detection for Transmodel XML documents.
  *
  * Determines whether an XML file is NeTEx or SIRI by inspecting
  * the root element's namespace. NeTEx imports SIRI types but always
@@ -7,7 +7,7 @@
  * so namespace detection is reliable.
  */
 
-export type TransmodelFormat = "netex" | "siri";
+import type { TransmodelFormat } from "./types.js";
 
 const NETEX_NAMESPACE = "http://www.netex.org.uk/netex";
 const SIRI_NAMESPACE = "http://www.siri.org.uk/siri";

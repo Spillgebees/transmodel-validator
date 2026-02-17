@@ -5,9 +5,8 @@
  * StopPlaceRef in a PassengerStopAssignment.
  */
 
+import type { DocumentInput } from "@transmodel-validator/shared";
 import { describe, expect, it } from "vitest";
-
-import type { DocumentInput } from "../../types.js";
 import { everyStopPlaceIsReferenced } from "./everyStopPlaceIsReferenced.js";
 import { doc, netex, netexFlat } from "./testHelpers.js";
 

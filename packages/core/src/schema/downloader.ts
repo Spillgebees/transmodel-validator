@@ -12,7 +12,7 @@ import { join } from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 
-import type { SchemaId } from "../types.js";
+import type { SchemaId } from "@transmodel-validator/shared";
 import { SCHEMA_REGISTRY, type SchemaEntry } from "./registry.js";
 
 const CACHE_ROOT = join(homedir(), ".cache", "transmodel-validator", "schemas");

@@ -10,13 +10,13 @@
  * `CROSS_DOC_RULES` so it receives the full document set.
  */
 
-import { consistencyError, qualityError } from "../../errors.js";
 import type {
   DocumentInput,
   Rule,
   RuleConfig,
   ValidationError,
-} from "../../types.js";
+} from "@transmodel-validator/shared";
+import { consistencyError, qualityError } from "@transmodel-validator/shared";
 import { buildPrerequisiteGraph } from "../../xml/frames.js";
 
 const RULE_NAME = "netexPrerequisitesAreSatisfied";
