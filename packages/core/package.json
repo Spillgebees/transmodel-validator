@@ -22,6 +22,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@transmodel-validator/shared": "workspace:*",
     "libxml2-wasm": "^0.6.0"
   },
   "devDependencies": {

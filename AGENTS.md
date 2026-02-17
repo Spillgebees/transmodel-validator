@@ -8,10 +8,11 @@ Agent guidelines for the `transmodel-validator` monorepo (pnpm workspaces, TypeS
 # Install dependencies
 pnpm install
 
-# Build all packages (core must build before cli/web can use it)
+# Build all packages (shared must build before core; core before cli/web)
 pnpm build
 
 # Build a single package
+pnpm --filter @transmodel-validator/shared build
 pnpm --filter @transmodel-validator/core build
 pnpm --filter @transmodel-validator/cli build
 pnpm --filter @transmodel-validator/web build
@@ -46,9 +47,10 @@ pnpm --filter @transmodel-validator/web dev
 ## Project Structure
 
 ```
-packages/core/   # @transmodel-validator/core — validation engine, rules, XSD, schema download
-packages/cli/    # @transmodel-validator/cli  — CLI wrapper (no framework, uses node:util parseArgs)
-packages/web/    # @transmodel-validator/web  — TanStack Start (React) web UI, Tailwind CSS v4
+packages/shared/ # @transmodel-validator/shared — types, errors, descriptors, format detection (zero deps, browser-safe)
+packages/core/   # @transmodel-validator/core   — validation engine, rules, XSD, schema download (depends on shared)
+packages/cli/    # @transmodel-validator/cli    — CLI wrapper (depends on shared + core)
+packages/web/    # @transmodel-validator/web    — TanStack Start (React) web UI, Tailwind CSS v4 (depends on shared + core)
 ```
 
 - **Node >= 22**, **pnpm 10.28.2**, all packages are **ESM** (`"type": "module"`)
@@ -63,7 +65,7 @@ packages/web/    # @transmodel-validator/web  — TanStack Start (React) web UI,
 
 ### Imports
 
-- **core/cli**: Use `.js` extensions in all relative imports (`import { foo } from "./bar.js"`). Required by Node16 module resolution.
+- **shared/core/cli**: Use `.js` extensions in all relative imports (`import { foo } from "./bar.js"`). Required by Node16 module resolution.
 - **web**: No `.js` extensions (uses Bundler resolution). Use the `~/` path alias for src-relative imports (`import { X } from "~/components/X"`).
 - Use `import type { ... }` for type-only imports — enforced by `verbatimModuleSyntax` in core/cli tsconfig.
 - Use `export type { ... }` for type-only re-exports in barrel files.
@@ -135,7 +137,7 @@ Rules, profiles, and schemas use `ReadonlyMap` registries with typed getter func
 - Dynamic `import()` inside TanStack Start server functions (`createServerFn`)
 - The SSE API route handler (`routes/api/validate.tsx`)
 
-Client-safe constants (profile names, rule names) are duplicated in `packages/web/src/lib/constants.ts`.
+Client-safe constants (profile names, rule names, descriptors) live in `@transmodel-validator/shared` and are re-exported by `packages/web/src/lib/constants.ts`.
 
 ### Schema Management
 

@@ -16,6 +16,10 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true
   },
-  "references": [{ "path": "packages/core" }, { "path": "packages/cli" }],
+  "references": [
+    { "path": "packages/shared" },
+    { "path": "packages/core" },
+    { "path": "packages/cli" }
+  ],
   "exclude": ["node_modules", "dist"]
 }

@@ -8,13 +8,13 @@
  * - FrameDefaults must have a DefaultLocationSystem containing "4326" or "WGS84".
  */
 
-import { qualityError, skippedInfo } from "../../errors.js";
 import type {
   DocumentInput,
   Rule,
   RuleConfig,
   ValidationError,
-} from "../../types.js";
+} from "@transmodel-validator/shared";
+import { qualityError, skippedInfo } from "@transmodel-validator/shared";
 import { haversineMeters } from "../../xml/geo.js";
 import {
   findChildren,

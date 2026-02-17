@@ -4,9 +4,8 @@
  * Covers parsePrerequisites, findAllFrames, and buildPrerequisiteGraph.
  */
 
+import type { DocumentInput } from "@transmodel-validator/shared";
 import { describe, expect, it } from "vitest";
-
-import type { DocumentInput } from "../types.js";
 import {
   buildPrerequisiteGraph,
   findAllFrames,

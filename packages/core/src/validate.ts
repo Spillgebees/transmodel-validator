@@ -7,20 +7,19 @@
  */
 
 import { readFile } from "node:fs/promises";
-
-import { extractXmlFromArchive, isArchive } from "./archive/extract.js";
-import { detectFormat } from "./formats/detect.js";
-import { DEFAULT_PROFILE, getProfile } from "./profiles/index.js";
-import { getRule, RULE_REGISTRY } from "./rules/registry.js";
-import { resolveEntryXsd } from "./schema/downloader.js";
-import { validateXsd } from "./schema/xsd-validator.js";
 import type {
   DocumentInput,
   FileResult,
   ValidateOptions,
   ValidationError,
   ValidationResult,
-} from "./types.js";
+} from "@transmodel-validator/shared";
+import { detectFormat } from "@transmodel-validator/shared";
+import { extractXmlFromArchive, isArchive } from "./archive/extract.js";
+import { DEFAULT_PROFILE, getProfile } from "./profiles/index.js";
+import { getRule, RULE_REGISTRY } from "./rules/registry.js";
+import { resolveEntryXsd } from "./schema/downloader.js";
+import { validateXsd } from "./schema/xsd-validator.js";
 
 /**
  * Names of rules that require access to all documents simultaneously

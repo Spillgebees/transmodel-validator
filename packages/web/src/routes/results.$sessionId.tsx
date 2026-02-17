@@ -2,7 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { InlineMarkdown } from "~/components/InlineMarkdown";
 import { XmlViewer } from "~/components/XmlViewer";
-import { NETEX_RULES, SCHEMA_VERSIONS, SIRI_RULES } from "~/lib/constants";
+import {
+  NETEX_RULE_DESCRIPTORS,
+  SCHEMA_VERSIONS,
+  SIRI_RULE_DESCRIPTORS,
+} from "~/lib/constants";
 import { getSession } from "~/lib/sessions";
 import type { Session, ValidationError, XmlSnippet } from "~/lib/types";
 
@@ -709,8 +713,8 @@ function PassedCheckRow({
 function checkDisplayName(name: string): string {
   if (name === "xsd") return "Schema";
   const rule =
-    NETEX_RULES.find((r) => r.name === name) ??
-    SIRI_RULES.find((r) => r.name === name);
+    NETEX_RULE_DESCRIPTORS.find((r) => r.name === name) ??
+    SIRI_RULE_DESCRIPTORS.find((r) => r.name === name);
   return rule?.displayName ?? name;
 }
 
@@ -718,8 +722,8 @@ function checkDisplayName(name: string): string {
 function checkDescription(name: string): string | undefined {
   if (name === "xsd") return undefined;
   const rule =
-    NETEX_RULES.find((r) => r.name === name) ??
-    SIRI_RULES.find((r) => r.name === name);
+    NETEX_RULE_DESCRIPTORS.find((r) => r.name === name) ??
+    SIRI_RULE_DESCRIPTORS.find((r) => r.name === name);
   return rule?.description;
 }
 
@@ -805,7 +809,7 @@ function ErrorCard({
       {hasCode && (
         <XmlViewer
           snippet={snippet}
-          errorLines={[err.line]}
+          errorLines={err.line ? [err.line] : []}
           focusLine={err.line}
           borderless
         />

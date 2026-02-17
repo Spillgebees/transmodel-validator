@@ -22,13 +22,13 @@
  * `CROSS_DOC_RULES` mechanism in `validate.ts`.
  */
 
-import { consistencyError, skippedInfo } from "../../errors.js";
 import type {
   DocumentInput,
   Rule,
   RuleConfig,
   ValidationError,
-} from "../../types.js";
+} from "@transmodel-validator/shared";
+import { consistencyError, skippedInfo } from "@transmodel-validator/shared";
 import { findAll, getAttr } from "../../xml/helpers.js";
 
 const RULE_NAME = "netexKeyRefConstraints";

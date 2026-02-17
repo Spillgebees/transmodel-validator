@@ -24,13 +24,13 @@
  * `validate.ts` so that the orchestrator supplies `xsdContent`.
  */
 
-import { consistencyError, skippedInfo } from "../../errors.js";
 import type {
   DocumentInput,
   Rule,
   RuleConfig,
   ValidationError,
-} from "../../types.js";
+} from "@transmodel-validator/shared";
+import { consistencyError, skippedInfo } from "@transmodel-validator/shared";
 import type { FrameInfo } from "../../xml/frames.js";
 import { findAllFrames } from "../../xml/frames.js";
 import { findAll, getAttr } from "../../xml/helpers.js";

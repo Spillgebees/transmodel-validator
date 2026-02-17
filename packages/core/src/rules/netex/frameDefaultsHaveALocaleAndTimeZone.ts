@@ -16,8 +16,12 @@
  * All fields are optional — only validated when present.
  */
 
-import { consistencyError, skippedInfo } from "../../errors.js";
-import type { DocumentInput, Rule, ValidationError } from "../../types.js";
+import type {
+  DocumentInput,
+  Rule,
+  ValidationError,
+} from "@transmodel-validator/shared";
+import { consistencyError, skippedInfo } from "@transmodel-validator/shared";
 import {
   findChildren,
   getChildText,

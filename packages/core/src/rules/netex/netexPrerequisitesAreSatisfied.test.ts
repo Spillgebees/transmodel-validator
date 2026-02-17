@@ -6,9 +6,8 @@
  * without corresponding prerequisite declarations.
  */
 
+import type { DocumentInput } from "@transmodel-validator/shared";
 import { describe, expect, it } from "vitest";
-
-import type { DocumentInput } from "../../types.js";
 import { netexPrerequisitesAreSatisfied } from "./netexPrerequisitesAreSatisfied.js";
 import { netex } from "./testHelpers.js";
 

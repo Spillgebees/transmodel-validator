@@ -4,8 +4,12 @@
  * Every StopPlace must have either a Name or ShortName child element.
  */
 
-import { consistencyError } from "../../errors.js";
-import type { DocumentInput, Rule, ValidationError } from "../../types.js";
+import type {
+  DocumentInput,
+  Rule,
+  ValidationError,
+} from "@transmodel-validator/shared";
+import { consistencyError } from "@transmodel-validator/shared";
 import { getAttr, getChildText } from "../../xml/helpers.js";
 import { findNeTExElements, STOP_PLACES } from "../../xml/paths.js";
 

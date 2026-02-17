@@ -12,7 +12,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 
-import type { DocumentInput } from "../types.js";
+import type { DocumentInput } from "@transmodel-validator/shared";
 
 const execFileAsync = promisify(execFile);
 

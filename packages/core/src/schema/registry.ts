@@ -5,7 +5,7 @@
  * Neither is bundled; they are downloaded at runtime and cached.
  */
 
-import type { SchemaId } from "../types.js";
+import type { SchemaId } from "@transmodel-validator/shared";
 
 export interface SchemaEntry {
   /** Human-readable label. */

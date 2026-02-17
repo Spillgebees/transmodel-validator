@@ -2,7 +2,7 @@
  * Output formatter dispatch.
  */
 
-import type { ValidationResult } from "@transmodel-validator/core";
+import type { ValidationResult } from "@transmodel-validator/shared";
 
 import { formatCsv } from "./csv.js";
 import { formatJson } from "./json.js";

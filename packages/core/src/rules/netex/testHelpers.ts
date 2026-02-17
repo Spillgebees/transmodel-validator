@@ -4,7 +4,7 @@
  * Provides minimal XML document wrappers used across individual rule test files.
  */
 
-import type { DocumentInput } from "../../types.js";
+import type { DocumentInput } from "@transmodel-validator/shared";
 
 /** Wrap an XML string into a single-element DocumentInput array. */
 export function doc(xml: string): DocumentInput[] {
