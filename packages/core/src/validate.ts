@@ -33,6 +33,8 @@ import type {
  * resets its internal state for each one independently.
  */
 const CROSS_DOC_RULES = new Set([
+  "everyLineIsReferenced",
+  "everyStopPlaceIsReferenced",
   "netexKeyRefConstraints",
   "netexUniqueConstraints",
 ]);

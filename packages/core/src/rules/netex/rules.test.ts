@@ -110,6 +110,71 @@ describe("everyLineIsReferenced", () => {
     const errors = await everyLineIsReferenced.run(doc(xml));
     expect(errors).toHaveLength(0);
   });
+
+  it("passes when Line is in one file and LineRef is in another", async () => {
+    // arrange
+    const doc1: DocumentInput = {
+      fileName: "lines.xml",
+      xml: netex(`
+        <ServiceFrame id="SF:lines" version="1">
+          <lines>
+            <Line id="L1"><Name>Bus 1</Name></Line>
+          </lines>
+        </ServiceFrame>
+      `),
+    };
+    const doc2: DocumentInput = {
+      fileName: "routes.xml",
+      xml: netex(`
+        <ServiceFrame id="SF:routes" version="1">
+          <prerequisites>
+            <ServiceFrameRef ref="SF:lines" version="1" />
+          </prerequisites>
+          <routes>
+            <Route><LineRef ref="L1" /></Route>
+          </routes>
+        </ServiceFrame>
+      `),
+    };
+
+    // act
+    const errors = await everyLineIsReferenced.run([doc1, doc2]);
+
+    // assert
+    expect(errors).toHaveLength(0);
+  });
+
+  it("fails when Line has no LineRef in any document", async () => {
+    // arrange
+    const doc1: DocumentInput = {
+      fileName: "lines.xml",
+      xml: netex(`
+        <ServiceFrame>
+          <lines>
+            <Line id="L1"><Name>Bus 1</Name></Line>
+          </lines>
+        </ServiceFrame>
+      `),
+    };
+    const doc2: DocumentInput = {
+      fileName: "other.xml",
+      xml: netex(`
+        <ServiceFrame>
+          <routes>
+            <Route><LineRef ref="L99" /></Route>
+          </routes>
+        </ServiceFrame>
+      `),
+    };
+
+    // act
+    const errors = await everyLineIsReferenced.run([doc1, doc2]);
+
+    // assert
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain("L1");
+    expect(errors[0].fileName).toBe("lines.xml");
+  });
 });
 
 // =========================================================================
@@ -235,6 +300,75 @@ describe("everyStopPlaceIsReferenced", () => {
     const errors = await everyStopPlaceIsReferenced.run(doc(xml));
     expect(errors).toHaveLength(1);
     expect(errors[0].message).toContain("SP1");
+  });
+
+  it("passes when StopPlace is in one file and StopPlaceRef is in another", async () => {
+    // arrange
+    const doc1: DocumentInput = {
+      fileName: "stops.xml",
+      xml: netex(`
+        <SiteFrame id="SiF:stops" version="1">
+          <stopPlaces>
+            <StopPlace id="SP1"><Name>Test</Name></StopPlace>
+          </stopPlaces>
+        </SiteFrame>
+      `),
+    };
+    const doc2: DocumentInput = {
+      fileName: "assignments.xml",
+      xml: netex(`
+        <ServiceFrame id="SF:assignments" version="1">
+          <prerequisites>
+            <SiteFrameRef ref="SiF:stops" version="1" />
+          </prerequisites>
+          <stopAssignments>
+            <PassengerStopAssignment id="PSA1">
+              <StopPlaceRef ref="SP1" />
+            </PassengerStopAssignment>
+          </stopAssignments>
+        </ServiceFrame>
+      `),
+    };
+
+    // act
+    const errors = await everyStopPlaceIsReferenced.run([doc1, doc2]);
+
+    // assert
+    expect(errors).toHaveLength(0);
+  });
+
+  it("fails when StopPlace has no StopPlaceRef in any document", async () => {
+    // arrange
+    const doc1: DocumentInput = {
+      fileName: "stops.xml",
+      xml: netex(`
+        <SiteFrame>
+          <stopPlaces>
+            <StopPlace id="SP1"><Name>Test</Name></StopPlace>
+          </stopPlaces>
+        </SiteFrame>
+      `),
+    };
+    const doc2: DocumentInput = {
+      fileName: "other.xml",
+      xml: netex(`
+        <ServiceFrame>
+          <stopAssignments>
+            <PassengerStopAssignment id="PSA1">
+              <StopPlaceRef ref="SP99" />
+            </PassengerStopAssignment>
+          </stopAssignments>
+        </ServiceFrame>
+      `),
+    };
+
+    // act
+    const errors = await everyStopPlaceIsReferenced.run([doc1, doc2]);
+
+    // assert
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain("SP1");
+    expect(errors[0].fileName).toBe("stops.xml");
   });
 });
 
