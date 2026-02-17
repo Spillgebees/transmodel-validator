@@ -9,7 +9,13 @@
 
 import { consistencyError } from "../../errors.js";
 import type { DocumentInput, Rule, ValidationError } from "../../types.js";
-import { findChildren, getAttr, getChildText } from "../../xml/helpers.js";
+import {
+  findChildren,
+  getAttr,
+  getChildText,
+  innerBaseLine,
+  innerBaseOffset,
+} from "../../xml/helpers.js";
 import { findNeTExElements, SERVICE_JOURNEYS } from "../../xml/paths.js";
 
 const RULE_NAME = "everyStopPointHasArrivalAndDepartureTime";
@@ -32,11 +38,15 @@ export const everyStopPointHasArrivalAndDepartureTime: Rule = {
         const passingTimesContainers = findChildren(
           journey.innerXml,
           "passingTimes",
+          innerBaseOffset(journey),
+          innerBaseLine(journey),
         );
         for (const container of passingTimesContainers) {
           const passingTimes = findChildren(
             container.innerXml,
             "TimetabledPassingTime",
+            innerBaseOffset(container),
+            innerBaseLine(container),
           );
 
           for (let i = 0; i < passingTimes.length; i++) {

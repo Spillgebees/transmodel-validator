@@ -76,13 +76,13 @@ export const NETEX_RULES: readonly RuleInfo[] = [
     name: "netexKeyRefConstraints",
     displayName: "Key reference constraints",
     description:
-      "Validates `xsd:keyref` constraints from the NeTEx schema across all documents.",
+      "Validates `xsd:keyref` constraints from the NeTEx schema across all documents — references in one file can resolve to keys in another.",
   },
   {
     name: "netexUniqueConstraints",
     displayName: "Uniqueness constraints",
     description:
-      "Validates `xsd:unique` constraints from the NeTEx schema — no duplicate keys.",
+      "Validates `xsd:unique` constraints from the NeTEx schema \u2014 no duplicate keys within each document.",
   },
 ];
 

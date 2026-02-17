@@ -28,6 +28,41 @@ export interface XmlElement {
 }
 
 /**
+ * Compute the base line offset for content inside an element's inner XML.
+ *
+ * When searching within an element's `innerXml` fragment, child elements
+ * have fragment-relative line numbers. Use this value as `baseLine` when
+ * calling `findChildren` or `findAll` on the fragment to get absolute
+ * line numbers relative to the original document.
+ *
+ * @param element - The parent element whose inner XML will be searched.
+ * @returns A 0-based line offset to add to fragment-relative line numbers.
+ */
+export function innerBaseLine(element: XmlElement): number {
+  return element.line - 1 + countNewlines(element.openTag);
+}
+
+/**
+ * Compute the byte offset where an element's inner XML content starts
+ * in the original document.
+ *
+ * @param element - The parent element.
+ * @returns The absolute byte offset of the inner XML start.
+ */
+export function innerBaseOffset(element: XmlElement): number {
+  return element.offset + element.openTag.length;
+}
+
+/** Count the number of newline characters in a string. */
+function countNewlines(str: string): number {
+  let n = 0;
+  for (const ch of str) {
+    if (ch === "\n") n++;
+  }
+  return n;
+}
+
+/**
  * Count the number of newlines before a given offset in a string.
  * Returns a 1-based line number.
  */
@@ -55,11 +90,21 @@ export function getAttr(openTag: string, name: string): string | undefined {
  * Find all top-level child elements with a given local name inside an
  * XML fragment. "Top-level" means direct children — does not recurse
  * into nested elements of the same name.
+ *
+ * @param xml - The XML string to search (can be a full document or fragment).
+ * @param localName - The element local name to find.
+ * @param baseOffset - Byte offset of the fragment start in the original
+ *   document. Added to each element's `offset` to produce absolute offsets.
+ * @param baseLine - 0-based line offset of the fragment start in the
+ *   original document. Added to each element's fragment-relative line
+ *   number to produce absolute line numbers. Use `innerBaseLine(parent)`
+ *   when searching inside a parent element's `innerXml`.
  */
 export function findChildren(
   xml: string,
   localName: string,
   baseOffset = 0,
+  baseLine = 0,
 ): XmlElement[] {
   const results: XmlElement[] = [];
 
@@ -82,7 +127,7 @@ export function findChildren(
         openTag,
         innerXml: "",
         outerXml: openTag,
-        line: lineAt(xml, tagStart + baseOffset),
+        line: lineAt(xml, tagStart) + baseLine,
         offset: tagStart + baseOffset,
       });
       continue;
@@ -103,7 +148,7 @@ export function findChildren(
       openTag,
       innerXml,
       outerXml,
-      line: lineAt(xml, tagStart + baseOffset),
+      line: lineAt(xml, tagStart) + baseLine,
       offset: tagStart + baseOffset,
     });
 
@@ -117,11 +162,20 @@ export function findChildren(
 /**
  * Find all elements matching a given local name anywhere in the document
  * (depth-first search).
+ *
+ * @param xml - The XML string to search (can be a full document or fragment).
+ * @param localName - The element local name to find.
+ * @param baseOffset - Byte offset of the fragment start in the original
+ *   document. Added to each element's `offset` to produce absolute offsets.
+ * @param baseLine - 0-based line offset of the fragment start in the
+ *   original document. Added to each element's fragment-relative line
+ *   number to produce absolute line numbers.
  */
 export function findAll(
   xml: string,
   localName: string,
   baseOffset = 0,
+  baseLine = 0,
 ): XmlElement[] {
   const results: XmlElement[] = [];
 
@@ -141,7 +195,7 @@ export function findAll(
         openTag,
         innerXml: "",
         outerXml: openTag,
-        line: lineAt(xml, tagStart + baseOffset),
+        line: lineAt(xml, tagStart) + baseLine,
         offset: tagStart + baseOffset,
       });
       continue;
@@ -159,7 +213,7 @@ export function findAll(
       openTag,
       innerXml,
       outerXml,
-      line: lineAt(xml, tagStart + baseOffset),
+      line: lineAt(xml, tagStart) + baseLine,
       offset: tagStart + baseOffset,
     });
   }
@@ -193,29 +247,35 @@ export function navigatePath(
   xml: string,
   path: string,
   baseOffset = 0,
+  baseLine = 0,
 ): XmlElement[] {
   const segments = path.split("/").filter(Boolean);
   if (segments.length === 0) return [];
 
-  let currentFragments = [{ xml, offset: baseOffset }];
+  let currentFragments = [{ xml, offset: baseOffset, line: baseLine }];
 
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
-    const nextFragments: { xml: string; offset: number }[] = [];
+    const nextFragments: { xml: string; offset: number; line: number }[] = [];
 
     for (const frag of currentFragments) {
-      const children = findChildren(frag.xml, segment, frag.offset);
+      const children = findChildren(frag.xml, segment, frag.offset, frag.line);
       for (const child of children) {
         if (i < segments.length - 1) {
           // Intermediate segment — descend into innerXml.
           nextFragments.push({
             xml: child.innerXml,
-            offset: child.offset + child.openTag.length,
+            offset: innerBaseOffset(child),
+            line: innerBaseLine(child),
           });
         } else {
           // Final segment — these are our results. But we need them
           // as elements, not fragments.
-          nextFragments.push({ xml: child.outerXml, offset: child.offset });
+          nextFragments.push({
+            xml: child.outerXml,
+            offset: child.offset,
+            line: child.line - 1,
+          });
         }
       }
     }
@@ -224,7 +284,9 @@ export function navigatePath(
       // Re-parse the final fragments to return proper XmlElements.
       const results: XmlElement[] = [];
       for (const frag of currentFragments) {
-        results.push(...findChildren(frag.xml, segment, frag.offset));
+        results.push(
+          ...findChildren(frag.xml, segment, frag.offset, frag.line),
+        );
       }
       return results;
     }

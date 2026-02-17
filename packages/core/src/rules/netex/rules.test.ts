@@ -293,6 +293,47 @@ describe("everyStopPointHasArrivalAndDepartureTime", () => {
     expect(errors[0].message).toContain("departure time");
     expect(errors[0].message).toContain("TPT2");
   });
+
+  it("reports correct line number for missing departure time in deeply nested document", async () => {
+    // arrange
+    const xml = [
+      `<?xml version="1.0" encoding="UTF-8"?>`, // line 1
+      `<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.0">`, // line 2
+      `  <dataObjects>`, // line 3
+      `    <CompositeFrame>`, // line 4
+      `      <frames>`, // line 5
+      `        <TimetableFrame>`, // line 6
+      `          <vehicleJourneys>`, // line 7
+      `            <ServiceJourney id="SJ1">`, // line 8
+      `              <passingTimes>`, // line 9
+      `                <TimetabledPassingTime id="TPT1">`, // line 10
+      `                  <DepartureTime>08:00:00</DepartureTime>`, // line 11
+      `                </TimetabledPassingTime>`, // line 12
+      `                <TimetabledPassingTime id="TPT2">`, // line 13
+      `                  <ArrivalTime>08:10:00</ArrivalTime>`, // line 14
+      `                </TimetabledPassingTime>`, // line 15
+      `                <TimetabledPassingTime id="TPT3">`, // line 16
+      `                  <ArrivalTime>08:20:00</ArrivalTime>`, // line 17
+      `                </TimetabledPassingTime>`, // line 18
+      `              </passingTimes>`, // line 19
+      `            </ServiceJourney>`, // line 20
+      `          </vehicleJourneys>`, // line 21
+      `        </TimetableFrame>`, // line 22
+      `      </frames>`, // line 23
+      `    </CompositeFrame>`, // line 24
+      `  </dataObjects>`, // line 25
+      `</PublicationDelivery>`, // line 26
+    ].join("\n");
+
+    // act
+    const errors = await everyStopPointHasArrivalAndDepartureTime.run(doc(xml));
+
+    // assert
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain("departure time");
+    expect(errors[0].message).toContain("TPT2");
+    expect(errors[0].line).toBe(13);
+  });
 });
 
 // =========================================================================
@@ -380,6 +421,88 @@ describe("frameDefaultsHaveALocaleAndTimeZone", () => {
     expect(errors[0].message).toContain("DefaultLanguage");
   });
 
+  it("passes when TimeZone is a common abbreviation (CET)", async () => {
+    // arrange
+    const xml = netex(
+      `<ServiceFrame></ServiceFrame>`,
+      `<DefaultLocale>
+        <TimeZone>CET</TimeZone>
+        <SummerTimeZone>CEST</SummerTimeZone>
+      </DefaultLocale>`,
+    );
+
+    // act
+    const errors = await frameDefaultsHaveALocaleAndTimeZone.run(doc(xml));
+
+    // assert
+    expect(errors).toHaveLength(0);
+  });
+
+  it("passes when TimeZone is UTC offset (UTC+1)", async () => {
+    // arrange
+    const xml = netex(
+      `<ServiceFrame></ServiceFrame>`,
+      `<DefaultLocale>
+        <TimeZone>UTC+1</TimeZone>
+      </DefaultLocale>`,
+    );
+
+    // act
+    const errors = await frameDefaultsHaveALocaleAndTimeZone.run(doc(xml));
+
+    // assert
+    expect(errors).toHaveLength(0);
+  });
+
+  it("passes when TimeZone is GMT offset (GMT+01:00)", async () => {
+    // arrange
+    const xml = netex(
+      `<ServiceFrame></ServiceFrame>`,
+      `<DefaultLocale>
+        <TimeZone>GMT+01:00</TimeZone>
+      </DefaultLocale>`,
+    );
+
+    // act
+    const errors = await frameDefaultsHaveALocaleAndTimeZone.run(doc(xml));
+
+    // assert
+    expect(errors).toHaveLength(0);
+  });
+
+  it("skips validation when TimeZone is empty string (falsy, treated as absent)", async () => {
+    // arrange
+    const xml = netex(
+      `<ServiceFrame></ServiceFrame>`,
+      `<DefaultLocale>
+        <TimeZone></TimeZone>
+      </DefaultLocale>`,
+    );
+
+    // act
+    const errors = await frameDefaultsHaveALocaleAndTimeZone.run(doc(xml));
+
+    // assert — empty string is falsy so the guard skips validation
+    expect(errors).toHaveLength(0);
+  });
+
+  it("fails when TimeZone is random text", async () => {
+    // arrange
+    const xml = netex(
+      `<ServiceFrame></ServiceFrame>`,
+      `<DefaultLocale>
+        <TimeZone>not a timezone</TimeZone>
+      </DefaultLocale>`,
+    );
+
+    // act
+    const errors = await frameDefaultsHaveALocaleAndTimeZone.run(doc(xml));
+
+    // assert
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain("TimeZone");
+  });
+
   it("skips when FrameDefaults is missing (info severity)", async () => {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.0">
@@ -394,6 +517,70 @@ describe("frameDefaultsHaveALocaleAndTimeZone", () => {
     expect(errors[0].severity).toBe("info");
     expect(errors[0].category).toBe("skipped");
     expect(errors[0].message).toContain("Skipped");
+  });
+
+  it("reports correct line number for deeply nested invalid TimeZone", async () => {
+    // arrange
+    // NOTE: Each line is numbered explicitly so we can assert the exact line.
+    const xml = [
+      `<?xml version="1.0" encoding="UTF-8"?>`, // line 1
+      `<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.0">`, // line 2
+      `  <dataObjects>`, // line 3
+      `    <CompositeFrame>`, // line 4
+      `      <FrameDefaults>`, // line 5
+      `        <DefaultLocale>`, // line 6
+      `          <TimeZone>INVALID_TZ</TimeZone>`, // line 7
+      `          <DefaultLanguage>en</DefaultLanguage>`, // line 8
+      `        </DefaultLocale>`, // line 9
+      `      </FrameDefaults>`, // line 10
+      `      <frames>`, // line 11
+      `        <ServiceFrame></ServiceFrame>`, // line 12
+      `      </frames>`, // line 13
+      `    </CompositeFrame>`, // line 14
+      `  </dataObjects>`, // line 15
+      `</PublicationDelivery>`, // line 16
+    ].join("\n");
+
+    // act
+    const errors = await frameDefaultsHaveALocaleAndTimeZone.run(doc(xml));
+
+    // assert
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain("TimeZone");
+    expect(errors[0].line).toBe(6);
+  });
+
+  it("reports correct line number for invalid DefaultLanguage deep in document", async () => {
+    // arrange
+    const xml = [
+      `<?xml version="1.0" encoding="UTF-8"?>`, // line 1
+      `<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.0">`, // line 2
+      `  <dataObjects>`, // line 3
+      `    <CompositeFrame>`, // line 4
+      `      <FrameDefaults>`, // line 5
+      `        <DefaultLocale>`, // line 6
+      `          <TimeZoneOffset>+1</TimeZoneOffset>`, // line 7
+      `          <TimeZone>Europe/Oslo</TimeZone>`, // line 8
+      `          <SummerTimeZoneOffset>+2</SummerTimeZoneOffset>`, // line 9
+      `          <SummerTimeZone>Europe/Oslo</SummerTimeZone>`, // line 10
+      `          <DefaultLanguage>zzz</DefaultLanguage>`, // line 11
+      `        </DefaultLocale>`, // line 12
+      `      </FrameDefaults>`, // line 13
+      `      <frames>`, // line 14
+      `        <ServiceFrame></ServiceFrame>`, // line 15
+      `      </frames>`, // line 16
+      `    </CompositeFrame>`, // line 17
+      `  </dataObjects>`, // line 18
+      `</PublicationDelivery>`, // line 19
+    ].join("\n");
+
+    // act
+    const errors = await frameDefaultsHaveALocaleAndTimeZone.run(doc(xml));
+
+    // assert
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain("DefaultLanguage");
+    expect(errors[0].line).toBe(6);
   });
 });
 
@@ -489,6 +676,50 @@ describe("stopPlaceQuayDistanceIsReasonable", () => {
     expect(errors[0].category).toBe("skipped");
     expect(errors[0].message).toContain("Skipped");
   });
+
+  it("reports correct line number for distant Quay in deeply nested document", async () => {
+    // arrange
+    const xml = [
+      `<?xml version="1.0" encoding="UTF-8"?>`, // line 1
+      `<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.0">`, // line 2
+      `  <dataObjects>`, // line 3
+      `    <CompositeFrame>`, // line 4
+      `      <FrameDefaults>`, // line 5
+      `        <DefaultLocationSystem>EPSG:4326</DefaultLocationSystem>`, // line 6
+      `      </FrameDefaults>`, // line 7
+      `      <frames>`, // line 8
+      `        <SiteFrame>`, // line 9
+      `          <stopPlaces>`, // line 10
+      `            <StopPlace id="SP1">`, // line 11
+      `              <Centroid><Location>`, // line 12
+      `                <Longitude>10.0</Longitude>`, // line 13
+      `                <Latitude>60.0</Latitude>`, // line 14
+      `              </Location></Centroid>`, // line 15
+      `              <quays>`, // line 16
+      `                <Quay id="Q1">`, // line 17
+      `                  <Centroid><Location>`, // line 18
+      `                    <Longitude>10.1</Longitude>`, // line 19
+      `                    <Latitude>60.1</Latitude>`, // line 20
+      `                  </Location></Centroid>`, // line 21
+      `                </Quay>`, // line 22
+      `              </quays>`, // line 23
+      `            </StopPlace>`, // line 24
+      `          </stopPlaces>`, // line 25
+      `        </SiteFrame>`, // line 26
+      `      </frames>`, // line 27
+      `    </CompositeFrame>`, // line 28
+      `  </dataObjects>`, // line 29
+      `</PublicationDelivery>`, // line 30
+    ].join("\n");
+
+    // act
+    const errors = await stopPlaceQuayDistanceIsReasonable.run(doc(xml));
+
+    // assert
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain("exceeds **500m**");
+    expect(errors[0].line).toBe(11);
+  });
 });
 
 // =========================================================================
@@ -542,6 +773,44 @@ describe("passingTimesIsNotDecreasing", () => {
     const errors = await passingTimesIsNotDecreasing.run(doc(xml));
     expect(errors).toHaveLength(1);
     expect(errors[0].message).toContain("decreased");
+  });
+
+  it("reports correct line number for decreasing time in deeply nested document", async () => {
+    // arrange
+    const xml = [
+      `<?xml version="1.0" encoding="UTF-8"?>`, // line 1
+      `<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.0">`, // line 2
+      `  <dataObjects>`, // line 3
+      `    <CompositeFrame>`, // line 4
+      `      <frames>`, // line 5
+      `        <TimetableFrame>`, // line 6
+      `          <vehicleJourneys>`, // line 7
+      `            <ServiceJourney id="SJ1">`, // line 8
+      `              <passingTimes>`, // line 9
+      `                <TimetabledPassingTime id="T1">`, // line 10
+      `                  <DepartureTime>08:30:00</DepartureTime>`, // line 11
+      `                </TimetabledPassingTime>`, // line 12
+      `                <TimetabledPassingTime id="T2">`, // line 13
+      `                  <ArrivalTime>08:10:00</ArrivalTime>`, // line 14
+      `                  <DepartureTime>08:11:00</DepartureTime>`, // line 15
+      `                </TimetabledPassingTime>`, // line 16
+      `              </passingTimes>`, // line 17
+      `            </ServiceJourney>`, // line 18
+      `          </vehicleJourneys>`, // line 19
+      `        </TimetableFrame>`, // line 20
+      `      </frames>`, // line 21
+      `    </CompositeFrame>`, // line 22
+      `  </dataObjects>`, // line 23
+      `</PublicationDelivery>`, // line 24
+    ].join("\n");
+
+    // act
+    const errors = await passingTimesIsNotDecreasing.run(doc(xml));
+
+    // assert
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain("decreased");
+    expect(errors[0].line).toBe(13);
   });
 });
 
@@ -716,7 +985,8 @@ describe("netexUniqueConstraints", () => {
     expect(errors[0].message).toContain("UniqueStopPlaceId");
   });
 
-  it("fails when duplicate values exist across documents", async () => {
+  it("allows identical elements across documents (per-document scoping)", async () => {
+    // arrange
     const doc1 = {
       fileName: "a.xml",
       xml: `<root><StopPlace id="SP1" /></root>`,
@@ -725,11 +995,37 @@ describe("netexUniqueConstraints", () => {
       fileName: "b.xml",
       xml: `<root><StopPlace id="SP1" /></root>`,
     };
+
+    // act
     const errors = await netexUniqueConstraints.run([doc1, doc2], {
       xsdContent: UNIQUE_XSD,
     });
+
+    // assert — per W3C XSD §3.11.4, unique constraints are scoped to the
+    // declaring element (PublicationDelivery), so cross-document duplicates
+    // are allowed.
+    expect(errors).toHaveLength(0);
+  });
+
+  it("fails when duplicate values exist within a single document (multi-doc input)", async () => {
+    // arrange
+    const doc1 = {
+      fileName: "a.xml",
+      xml: `<root><StopPlace id="SP1" /><StopPlace id="SP1" /></root>`,
+    };
+    const doc2 = {
+      fileName: "b.xml",
+      xml: `<root><StopPlace id="SP2" /></root>`,
+    };
+
+    // act
+    const errors = await netexUniqueConstraints.run([doc1, doc2], {
+      xsdContent: UNIQUE_XSD,
+    });
+
+    // assert — only the within-document duplicate in doc1 is flagged
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain("Duplicate");
+    expect(errors[0].message).toContain("UniqueStopPlaceId");
   });
 
   it("passes when different documents have different IDs", async () => {

@@ -16,7 +16,13 @@ import type {
   ValidationError,
 } from "../../types.js";
 import { haversineMeters } from "../../xml/geo.js";
-import { findChildren, getAttr, getChildText } from "../../xml/helpers.js";
+import {
+  findChildren,
+  getAttr,
+  getChildText,
+  innerBaseLine,
+  innerBaseOffset,
+} from "../../xml/helpers.js";
 import {
   FRAME_DEFAULTS,
   findNeTExElements,
@@ -91,12 +97,27 @@ export const stopPlaceQuayDistanceIsReasonable: Rule = {
         const spLon = parseCoord(sp.innerXml, "Centroid/Location/Longitude");
         if (spLat === undefined || spLon === undefined) continue;
 
-        const quays = findChildren(sp.innerXml, "Quay");
+        const quays = findChildren(
+          sp.innerXml,
+          "Quay",
+          innerBaseOffset(sp),
+          innerBaseLine(sp),
+        );
         // Quays might be inside a <quays> wrapper
-        const quaysContainer = findChildren(sp.innerXml, "quays");
+        const quaysContainer = findChildren(
+          sp.innerXml,
+          "quays",
+          innerBaseOffset(sp),
+          innerBaseLine(sp),
+        );
         const allQuays =
           quaysContainer.length > 0
-            ? findChildren(quaysContainer[0].innerXml, "Quay")
+            ? findChildren(
+                quaysContainer[0].innerXml,
+                "Quay",
+                innerBaseOffset(quaysContainer[0]),
+                innerBaseLine(quaysContainer[0]),
+              )
             : quays;
 
         for (const quay of allQuays) {

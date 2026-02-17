@@ -17,7 +17,13 @@ import type {
   ValidationError,
 } from "../../types.js";
 import { haversineMeters } from "../../xml/geo.js";
-import { findChildren, getAttr, getChildText } from "../../xml/helpers.js";
+import {
+  findChildren,
+  getAttr,
+  getChildText,
+  innerBaseLine,
+  innerBaseOffset,
+} from "../../xml/helpers.js";
 import {
   findNeTExElements,
   SCHEDULED_STOP_POINTS,
@@ -59,6 +65,8 @@ export const locationsAreReferencingTheSamePoint: Rule = {
         const sspRefs = findChildren(
           assignment.innerXml,
           "ScheduledStopPointRef",
+          innerBaseOffset(assignment),
+          innerBaseLine(assignment),
         );
         const sspRefId =
           sspRefs.length > 0 ? getAttr(sspRefs[0].openTag, "ref") : undefined;
@@ -75,7 +83,12 @@ export const locationsAreReferencingTheSamePoint: Rule = {
         }
 
         // Get the StopPlaceRef
-        const spRefs = findChildren(assignment.innerXml, "StopPlaceRef");
+        const spRefs = findChildren(
+          assignment.innerXml,
+          "StopPlaceRef",
+          innerBaseOffset(assignment),
+          innerBaseLine(assignment),
+        );
         const spRefId =
           spRefs.length > 0 ? getAttr(spRefs[0].openTag, "ref") : undefined;
 

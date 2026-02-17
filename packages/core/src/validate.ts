@@ -26,6 +26,11 @@ import type {
  * Names of rules that require access to all documents simultaneously
  * (cross-document validation). These are run once with the full document
  * set rather than once per document.
+ *
+ * NOTE: `netexUniqueConstraints` checks uniqueness per-document (matching
+ * W3C XSD §3.11.4 semantics) but remains in this set so the orchestrator
+ * provides `xsdContent` via `ruleConfig`. It receives all documents but
+ * resets its internal state for each one independently.
  */
 const CROSS_DOC_RULES = new Set([
   "netexKeyRefConstraints",

@@ -8,7 +8,13 @@
 
 import { consistencyError } from "../../errors.js";
 import type { DocumentInput, Rule, ValidationError } from "../../types.js";
-import { findChildren, getAttr, getChildText } from "../../xml/helpers.js";
+import {
+  findChildren,
+  getAttr,
+  getChildText,
+  innerBaseLine,
+  innerBaseOffset,
+} from "../../xml/helpers.js";
 import { findNeTExElements, SERVICE_JOURNEYS } from "../../xml/paths.js";
 
 const RULE_NAME = "passingTimesIsNotDecreasing";
@@ -29,11 +35,18 @@ export const passingTimesIsNotDecreasing: Rule = {
       for (const journey of journeys) {
         const journeyId = getAttr(journey.openTag, "id");
 
-        const containers = findChildren(journey.innerXml, "passingTimes");
+        const containers = findChildren(
+          journey.innerXml,
+          "passingTimes",
+          innerBaseOffset(journey),
+          innerBaseLine(journey),
+        );
         for (const container of containers) {
           const passingTimes = findChildren(
             container.innerXml,
             "TimetabledPassingTime",
+            innerBaseOffset(container),
+            innerBaseLine(container),
           );
 
           let prevDepartureTime: string | undefined;

@@ -1,11 +1,22 @@
 /**
  * Rule: netexUniqueConstraints
  *
- * Parses the NeTEx XSD schema to extract xsd:unique constraints, then
- * validates that no duplicate values exist for the constrained fields.
+ * Parses the NeTEx XSD schema to extract `xsd:unique` constraints, then
+ * validates that no duplicate values exist for the constrained fields
+ * **within each document independently**.
  *
- * NOTE: Like netexKeyRefConstraints, this rule requires the XSD content
- * to be provided via the `xsdContent` config key.
+ * Per W3C XSD §3.11.4, identity constraints evaluate with the declaring
+ * element as context node. In NeTEx the unique constraints are declared on
+ * `PublicationDelivery` (one per file), so uniqueness is enforced
+ * per-document — not across the entire dataset.
+ *
+ * Cross-document referential integrity is handled separately by the
+ * `netexKeyRefConstraints` rule.
+ *
+ * NOTE: This rule requires the XSD content to be provided via the
+ * `xsdContent` config key. It remains in `CROSS_DOC_RULES` in
+ * `validate.ts` so that the orchestrator supplies `xsdContent`, even
+ * though uniqueness is checked per-document.
  */
 
 import { consistencyError, skippedInfo } from "../../errors.js";
@@ -30,7 +41,7 @@ export const netexUniqueConstraints: Rule = {
   name: RULE_NAME,
   displayName: "Uniqueness constraints",
   description:
-    "Validates `xsd:unique` constraints from the NeTEx schema \u2014 no duplicate keys.",
+    "Validates `xsd:unique` constraints from the NeTEx schema \u2014 no duplicate keys within each document.",
   formats: ["netex"],
 
   async run(
@@ -50,10 +61,14 @@ export const netexUniqueConstraints: Rule = {
     const errors: ValidationError[] = [];
     const constraints = parseUniqueConstraints(xsdContent);
 
+    // NOTE: Per W3C XSD §3.11.4, identity constraints evaluate with the
+    // declaring element as context node. In NeTEx the `xsd:unique`
+    // constraints are declared on `PublicationDelivery` (one per file),
+    // so uniqueness is enforced per-document — not across the entire
+    // dataset. The `seen` map is therefore reset for each document.
     for (const constraint of constraints) {
-      const seen = new Map<string, true>();
-
       for (const doc of documents) {
+        const seen = new Map<string, true>();
         const elements = findByXsdSelector(doc.xml, constraint.selector);
 
         for (const el of elements) {

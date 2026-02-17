@@ -3,17 +3,27 @@
  *
  * Validates that FrameDefaults/DefaultLocale has valid:
  * - TimeZoneOffset (if present): matches /^[+-]\d{1,2}$/
- * - TimeZone (if present): valid IANA time zone
+ * - TimeZone (if present): valid IANA time zone name, common abbreviation
+ *   (e.g. CET, CEST, UTC, GMT), or UTC/GMT offset (e.g. UTC+1, GMT-05:00)
  * - SummerTimeZoneOffset (if present): same regex
- * - SummerTimeZone (if present): valid IANA time zone
+ * - SummerTimeZone (if present): same timezone validation as TimeZone
  * - DefaultLanguage (if present): valid ISO 639-1 language code
+ *
+ * NOTE: The NeTEx schema defines `<TimeZone>` as `xsd:normalizedString`,
+ * so it does not restrict to IANA names. European transit operators commonly
+ * use abbreviations like CET/CEST in their data.
  *
  * All fields are optional — only validated when present.
  */
 
 import { consistencyError, skippedInfo } from "../../errors.js";
 import type { DocumentInput, Rule, ValidationError } from "../../types.js";
-import { findChildren, getChildText } from "../../xml/helpers.js";
+import {
+  findChildren,
+  getChildText,
+  innerBaseLine,
+  innerBaseOffset,
+} from "../../xml/helpers.js";
 import { FRAME_DEFAULTS, findNeTExElements } from "../../xml/paths.js";
 
 const RULE_NAME = "frameDefaultsHaveALocaleAndTimeZone";
@@ -212,14 +222,79 @@ const ISO_639_1 = new Set([
 const TZ_OFFSET_RE = /^[+-]\d{1,2}$/;
 
 /**
- * Basic validation for IANA time zone names.
- * We check that it looks like `Area/City` (e.g. `Europe/Oslo`).
- * Full validation would require the IANA database, but this catches
- * obvious issues.
+ * Common timezone abbreviations used in European and worldwide transit data.
+ * The NeTEx `<TimeZone>` element is `xsd:normalizedString` and does not
+ * restrict values to IANA names, so these abbreviations are valid.
+ */
+const TIMEZONE_ABBREVIATIONS = new Set([
+  "CET",
+  "CEST",
+  "EET",
+  "EEST",
+  "WET",
+  "WEST",
+  "GMT",
+  "UTC",
+  "BST",
+  "IST",
+  "MSK",
+  "JST",
+  "KST",
+  "CST",
+  "EST",
+  "PST",
+  "MST",
+  "HST",
+  "AKST",
+  "AKDT",
+  "CDT",
+  "EDT",
+  "MDT",
+  "PDT",
+  "HDT",
+  "NZST",
+  "NZDT",
+  "AEST",
+  "AEDT",
+  "ACST",
+  "ACDT",
+  "AWST",
+  "SST",
+  "AST",
+  "NST",
+  "NDT",
+  "ADT",
+  "ChST",
+]);
+
+/**
+ * Set of IANA timezone names supported by the runtime.
+ * Uses `Intl.supportedValuesOf("timeZone")` (available in Node 22+)
+ * for robust validation instead of a regex heuristic.
+ */
+const IANA_TIMEZONES = new Set(Intl.supportedValuesOf("timeZone"));
+
+/** Regex for UTC/GMT offset patterns: `UTC+1`, `UTC-05:00`, `GMT+01:00`, etc. */
+const UTC_GMT_OFFSET_RE = /^(?:UTC|GMT)[+-]\d{1,2}(?::\d{2})?$/;
+
+/**
+ * Validates a timezone string.
+ *
+ * Accepts:
+ * - IANA timezone names (e.g. `Europe/Luxembourg`, `America/New_York`) —
+ *   validated against `Intl.supportedValuesOf("timeZone")`
+ * - Common timezone abbreviations (e.g. `CET`, `CEST`, `GMT`, `UTC`)
+ * - UTC/GMT offset patterns (e.g. `UTC+1`, `UTC+01:00`, `GMT-5`, `GMT-05:00`)
+ *
+ * @param tz - The timezone string to validate.
+ * @returns `true` if the timezone is valid, `false` otherwise.
  */
 function isValidTimeZone(tz: string): boolean {
-  // Must contain at least one `/` and no spaces.
-  return /^[A-Za-z_]+\/[A-Za-z_/]+$/.test(tz);
+  return (
+    IANA_TIMEZONES.has(tz) ||
+    TIMEZONE_ABBREVIATIONS.has(tz) ||
+    UTC_GMT_OFFSET_RE.test(tz)
+  );
 }
 
 export const frameDefaultsHaveALocaleAndTimeZone: Rule = {
@@ -245,7 +320,12 @@ export const frameDefaultsHaveALocaleAndTimeZone: Rule = {
       }
 
       const fd = frameDefaults[0];
-      const locales = findChildren(fd.innerXml, "DefaultLocale");
+      const locales = findChildren(
+        fd.innerXml,
+        "DefaultLocale",
+        innerBaseOffset(fd),
+        innerBaseLine(fd),
+      );
       if (locales.length === 0) {
         // DefaultLocale is optional — no error if absent.
         continue;

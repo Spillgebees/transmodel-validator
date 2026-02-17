@@ -1,21 +1,25 @@
 /**
  * Rule: netexKeyRefConstraints
  *
- * Parses the NeTEx XSD schema to extract xsd:key and xsd:keyref constraints,
- * then validates that every keyref in the document(s) resolves to an
- * existing key.
+ * Parses the NeTEx XSD schema to extract `xsd:key` and `xsd:keyref`
+ * constraints, then validates that every keyref in the document(s)
+ * resolves to an existing key.
  *
- * This is the rule that requires cross-document validation — keyrefs in
- * one document can reference keys defined in another document within the
- * same archive.
+ * This rule is **intentionally cross-document**: keyrefs in one file can
+ * reference keys defined in another file within the same archive. This
+ * goes beyond strict W3C XSD §3.11.4 semantics (which scope identity
+ * constraints to the declaring element) by design — multi-file NeTEx
+ * datasets routinely split keys and their references across files (e.g.
+ * the Norwegian NeTEx profile mandates cross-file references). NeTEx
+ * ships a `NoConstraint.xsd` variant precisely because per-document
+ * keyref validation would reject valid multi-file references.
  *
  * **Important**: Elements with a `versionRef` attribute are skipped
  * (cross-version references are allowed to be unresolved).
  *
- * NOTE: This rule currently requires the XSD file to be available on
- * disk. The schema downloader must have been run first. For now we
- * accept the XSD content as a string via the `xsdContent` config key,
- * so the orchestrator can provide it.
+ * NOTE: This rule requires the XSD content to be provided via the
+ * `xsdContent` config key. The orchestrator supplies it through the
+ * `CROSS_DOC_RULES` mechanism in `validate.ts`.
  */
 
 import { consistencyError, skippedInfo } from "../../errors.js";
@@ -41,7 +45,7 @@ export const netexKeyRefConstraints: Rule = {
   name: RULE_NAME,
   displayName: "Key reference constraints",
   description:
-    "Validates `xsd:keyref` constraints from the NeTEx schema across all documents.",
+    "Validates `xsd:keyref` constraints from the NeTEx schema across all documents \u2014 references in one file can resolve to keys in another.",
   formats: ["netex"],
 
   async run(

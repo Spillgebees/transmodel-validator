@@ -116,8 +116,8 @@ The web UI lets you select any schema version from a dropdown, or upload a custo
 | `frameDefaultsHaveALocaleAndTimeZone` | `FrameDefaults` have valid locale and timezone settings |
 | `locationsAreReferencingTheSamePoint` | `ScheduledStopPoint` and `StopPlace` in a `PassengerStopAssignment` are geographically close |
 | `passingTimesIsNotDecreasing` | Passing times in a `ServiceJourney` do not decrease between consecutive stops |
-| `netexKeyRefConstraints` | Cross-document `xsd:keyref` constraint validation |
-| `netexUniqueConstraints` | Cross-document `xsd:unique` constraint validation |
+| `netexKeyRefConstraints` | Cross-document `xsd:keyref` constraint validation — references in one file can resolve to keys in another |
+| `netexUniqueConstraints` | Per-document `xsd:unique` constraint validation — no duplicate keys within each file |
 
 ## Schema caching
 
