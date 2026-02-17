@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.0">
+  <dataObjects>
+    <CompositeFrame>
+      <FrameDefaults>
+        <DefaultLocale>
+          <TimeZoneOffset>+1</TimeZoneOffset>
+          <TimeZone>Europe/Oslo</TimeZone>
+          <DefaultLanguage>no</DefaultLanguage>
+        </DefaultLocale>
+        <DefaultLocationSystem>EPSG:4326</DefaultLocationSystem>
+      </FrameDefaults>
+      <frames>
+        <ServiceFrame>
+          <lines>
+            <Line id="L1"><Name>Bus 1</Name></Line>
+          </lines>
+          <routes>
+            <Route><LineRef ref="L1" /></Route>
+          </routes>
+          <scheduledStopPoints>
+            <ScheduledStopPoint id="SSP1"><Name>Stop A</Name></ScheduledStopPoint>
+          </scheduledStopPoints>
+          <stopAssignments>
+            <PassengerStopAssignment id="PSA1">
+              <ScheduledStopPointRef ref="SSP1" />
+              <StopPlaceRef ref="SP1" />
+            </PassengerStopAssignment>
+          </stopAssignments>
+        </ServiceFrame>
+        <SiteFrame>
+          <stopPlaces>
+            <StopPlace id="SP1">
+              <Name>Central Station</Name>
+              <StopPlaceType>busStation</StopPlaceType>
+              <Centroid><Location>
+                <Longitude>10.0</Longitude>
+                <Latitude>60.0</Latitude>
+              </Location></Centroid>
+            </StopPlace>
+          </stopPlaces>
+        </SiteFrame>
+      </frames>
+    </CompositeFrame>
+  </dataObjects>
+</PublicationDelivery>

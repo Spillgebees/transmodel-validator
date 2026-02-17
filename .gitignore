@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.output/
+.vinxi/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Cache
+.cache/
+.turbo/
+
+# Test coverage
+coverage/
+
+# Logs
+*.log

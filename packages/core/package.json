@@ -1,0 +1,32 @@
+{
+  "name": "@transmodel-validator/core",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./archive": {
+      "types": "./dist/archive/extract.d.ts",
+      "import": "./dist/archive/extract.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "libxml2-wasm": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

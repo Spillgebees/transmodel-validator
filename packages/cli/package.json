@@ -1,0 +1,25 @@
+{
+  "name": "@transmodel-validator/cli",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "transmodel-validator": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@transmodel-validator/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/* ── Self-hosted fonts ───────────────────────────────────────────────
+   Font files live in public/fonts/ (from @fontsource-variable packages).
+   The @font-face rules are inlined in __root.tsx <head> so the browser
+   knows about them before any external CSS loads — this prevents FOUT
+   in both production (render-blocking CSS) and Vite dev mode (async CSS).
+   Preload <link>s in __root.tsx ensure fonts download immediately.
+
+   This CSS file does NOT contain @font-face rules to avoid duplication.
+   See __root.tsx `inlineFontFaces` for the canonical definitions.
+*/
+
+/* ── Custom theme ────────────────────────────────────────────────────── */
+/* Dark mode only. Exact HSL values from redesign reference:
+   globals.css :root block — no hex rounding.
+*/
+
+@theme {
+  /* Surfaces — exact redesign HSL values */
+  --color-surface: hsl(220, 15%, 8%); /* --background */
+  --color-surface-raised: hsl(220, 14%, 11%); /* --card */
+  --color-surface-overlay: hsl(220, 12%, 16%); /* --secondary / --muted */
+  --color-surface-hover: hsl(220, 12%, 20%); /* slightly lighter for hovers */
+
+  /* Borders */
+  --color-border: hsl(220, 12%, 18%); /* --border / --input */
+  --color-border-subtle: hsl(220, 12%, 16%);
+
+  /* Text */
+  --color-text: hsl(210, 20%, 95%); /* --foreground */
+  --color-text-muted: hsl(215, 15%, 68%); /* --muted-foreground */
+  --color-text-dim: hsl(215, 12%, 45%); /* extra dim for gaps/info */
+  --color-text-secondary: hsl(210, 20%, 90%); /* --secondary-foreground */
+
+  /* Primary — blue, used for interactive elements */
+  --color-primary: hsl(215, 90%, 60%);
+  --color-primary-hover: hsl(215, 90%, 52%);
+
+  /* Success — same blue as primary */
+  --color-success: hsl(215, 90%, 60%);
+
+  /* Error / destructive — orange */
+  --color-error: hsl(32, 95%, 55%);
+  --color-error-hover: hsl(32, 95%, 45%);
+  --color-fail: hsl(32, 95%, 55%);
+
+  /* Warning — same orange */
+  --color-warning: hsl(32, 95%, 55%);
+
+  /* Skipped — yellow */
+  --color-skipped: hsl(45, 90%, 55%);
+
+  /* Pass — blue (same as success) */
+  --color-pass: hsl(215, 90%, 60%);
+
+  /* Accent — kept as alias for primary */
+  --color-accent: hsl(215, 90%, 60%);
+  --color-accent-hover: hsl(215, 90%, 52%);
+
+  /* Fonts */
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* ── Base styles ─────────────────────────────────────────────────────── */
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-surface text-text font-sans antialiased;
+  min-height: 100dvh;
+}
+
+/* All buttons should show pointer cursor, except disabled ones */
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-dim);
+}

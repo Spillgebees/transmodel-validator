@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.0">
+  <dataObjects>
+    <CompositeFrame>
+      <frames>
+        <ServiceFrame>
+          <lines>
+            <Line id="ORPHAN"><Name>Unreferenced Line</Name></Line>
+          </lines>
+          <scheduledStopPoints>
+            <ScheduledStopPoint id="SSP1"></ScheduledStopPoint>
+          </scheduledStopPoints>
+        </ServiceFrame>
+        <SiteFrame>
+          <stopPlaces>
+            <StopPlace id="SP1">
+              <StopPlaceType>invalidType</StopPlaceType>
+            </StopPlace>
+          </stopPlaces>
+        </SiteFrame>
+      </frames>
+    </CompositeFrame>
+  </dataObjects>
+</PublicationDelivery>

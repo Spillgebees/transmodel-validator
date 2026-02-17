@@ -1,0 +1,90 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.2/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": ["**", "!**/routeTree.gen.ts"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "semicolons": "always",
+      "quoteStyle": "double",
+      "trailingCommas": "all",
+      "arrowParentheses": "always"
+    },
+    "jsxRuntime": "transparent"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "recommended": true,
+        "noUnresolvedImports": "off",
+        "useImportExtensions": "off",
+        "noNodejsModules": "off"
+      },
+      "suspicious": {
+        "recommended": true,
+        "noReactSpecificProps": "off",
+        "noConsole": "off",
+        "noAssignInExpressions": "off",
+        "noArrayIndexKey": "off"
+      },
+      "style": {
+        "recommended": true,
+        "noJsxLiterals": "off",
+        "noDefaultExport": "off",
+        "noProcessEnv": "off",
+        "noMagicNumbers": "off",
+        "noNonNullAssertion": "off",
+        "useExportsLast": "off",
+        "useComponentExportOnlyModules": "off",
+        "useFilenamingConvention": "off"
+      },
+      "complexity": {
+        "recommended": true,
+        "noExcessiveLinesPerFunction": "off",
+        "noExcessiveCognitiveComplexity": "off"
+      },
+      "performance": {
+        "recommended": true,
+        "useSolidForComponent": "off",
+        "noBarrelFile": "off",
+        "noImgElement": "off"
+      },
+      "security": {
+        "recommended": true,
+        "noSecrets": "off",
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "a11y": {
+        "recommended": true
+      }
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "recommended": true
+      }
+    }
+  }
+}

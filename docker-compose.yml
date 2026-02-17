@@ -1,0 +1,12 @@
+services:
+  web:
+    build: .
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      # Persist schema cache between restarts
+      - schema-cache:/home/appuser/.cache/transmodel-validator/schemas
+    restart: unless-stopped
+
+volumes:
+  schema-cache:
