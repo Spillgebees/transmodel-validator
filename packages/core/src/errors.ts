@@ -14,6 +14,7 @@ export function consistencyError(
   rule: string,
   message: string,
   line?: number,
+  fileName?: string,
 ): ValidationError {
   return {
     message,
@@ -22,6 +23,7 @@ export function consistencyError(
     category: "consistency",
     rule,
     line,
+    fileName,
   };
 }
 
@@ -29,6 +31,7 @@ export function qualityError(
   rule: string,
   message: string,
   line?: number,
+  fileName?: string,
 ): ValidationError {
   return {
     message,
@@ -37,6 +40,7 @@ export function qualityError(
     category: "quality",
     rule,
     line,
+    fileName,
   };
 }
 
@@ -44,6 +48,7 @@ export function notFoundError(
   rule: string,
   message: string,
   line?: number,
+  fileName?: string,
 ): ValidationError {
   return {
     message,
@@ -52,6 +57,7 @@ export function notFoundError(
     category: "not-found",
     rule,
     line,
+    fileName,
   };
 }
 
@@ -59,6 +65,7 @@ export function generalError(
   rule: string,
   message: string,
   line?: number,
+  fileName?: string,
 ): ValidationError {
   return {
     message,
@@ -67,6 +74,7 @@ export function generalError(
     category: "general",
     rule,
     line,
+    fileName,
   };
 }
 
@@ -74,6 +82,7 @@ export function skippedInfo(
   rule: string,
   message: string,
   line?: number,
+  fileName?: string,
 ): ValidationError {
   return {
     message,
@@ -82,6 +91,7 @@ export function skippedInfo(
     category: "skipped",
     rule,
     line,
+    fileName,
   };
 }
 

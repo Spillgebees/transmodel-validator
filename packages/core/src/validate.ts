@@ -279,17 +279,22 @@ async function runValidation(
       }
       const elapsed = Math.round(performance.now() - ruleStart);
 
-      // Add rule name + timing to every file result, errors to the first file.
+      // Add rule name + timing to every file result, distribute errors by fileName.
       for (const fr of fileResults) {
         fr.rulesRun.push(rule.name);
         fr.ruleTiming[rule.name] = elapsed;
       }
       if (fileResults.length > 0) {
-        fileResults[0].errors.push(...ruleErrors);
-        const realErrors = fileResults[0].errors.filter(
-          (e) => e.severity !== "info",
-        );
-        fileResults[0].passed = realErrors.length === 0;
+        for (const err of ruleErrors) {
+          const target = err.fileName
+            ? fileResults.find((fr) => fr.fileName === err.fileName)
+            : undefined;
+          (target ?? fileResults[0]).errors.push(err);
+        }
+        for (const fr of fileResults) {
+          fr.passed =
+            fr.errors.filter((e) => e.severity !== "info").length === 0;
+        }
       }
     }
   }
