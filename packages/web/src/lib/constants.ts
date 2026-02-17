@@ -79,6 +79,12 @@ export const NETEX_RULES: readonly RuleInfo[] = [
       "Validates `xsd:keyref` constraints from the NeTEx schema across all documents — references in one file can resolve to keys in another.",
   },
   {
+    name: "netexPrerequisitesAreSatisfied",
+    displayName: "Frame prerequisites",
+    description:
+      "Validates that declared frame `<prerequisites>` are present and recommends their use for cross-file references.",
+  },
+  {
     name: "netexUniqueConstraints",
     displayName: "Uniqueness constraints",
     description:

@@ -37,6 +37,7 @@ const CROSS_DOC_RULES = new Set([
   "everyStopPlaceIsReferenced",
   "locationsAreReferencingTheSamePoint",
   "netexKeyRefConstraints",
+  "netexPrerequisitesAreSatisfied",
   "netexUniqueConstraints",
 ]);
 
