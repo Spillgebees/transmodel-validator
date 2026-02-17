@@ -8,12 +8,12 @@
             <Line id="ORPHAN"><Name>Unreferenced Line</Name></Line>
           </lines>
           <scheduledStopPoints>
-            <ScheduledStopPoint id="SSP1"></ScheduledStopPoint>
+            <ScheduledStopPoint id="SSP99"></ScheduledStopPoint>
           </scheduledStopPoints>
         </ServiceFrame>
         <SiteFrame>
           <stopPlaces>
-            <StopPlace id="SP1">
+            <StopPlace id="SP99">
               <StopPlaceType>invalidType</StopPlaceType>
             </StopPlace>
           </stopPlaces>
