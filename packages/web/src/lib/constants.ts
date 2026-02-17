@@ -17,7 +17,7 @@ export const NETEX_RULES: readonly RuleInfo[] = [
     name: "everyLineIsReferenced",
     displayName: "`Line` references",
     description:
-      "Every `Line` must be referenced by at least one `LineRef` in the document.",
+      "Every `Line` must be referenced by at least one `LineRef` across all documents.",
   },
   {
     name: "everyStopPlaceHasAName",
@@ -34,7 +34,7 @@ export const NETEX_RULES: readonly RuleInfo[] = [
     name: "everyStopPlaceIsReferenced",
     displayName: "`StopPlace` references",
     description:
-      "Every `StopPlace` must be referenced by at least one `StopPlaceRef`.",
+      "Every `StopPlace` must be referenced by at least one `StopPlaceRef` across all documents.",
   },
   {
     name: "everyStopPointHasArrivalAndDepartureTime",
@@ -64,7 +64,7 @@ export const NETEX_RULES: readonly RuleInfo[] = [
     name: "locationsAreReferencingTheSamePoint",
     displayName: "Stop assignment locations",
     description:
-      "`ScheduledStopPoint` and `StopPlace` in a `PassengerStopAssignment` must be geographically close.",
+      "`ScheduledStopPoint` and `StopPlace` in a `PassengerStopAssignment` must be geographically close across all documents.",
   },
   {
     name: "passingTimesIsNotDecreasing",
@@ -79,10 +79,16 @@ export const NETEX_RULES: readonly RuleInfo[] = [
       "Validates `xsd:keyref` constraints from the NeTEx schema across all documents — references in one file can resolve to keys in another.",
   },
   {
+    name: "netexPrerequisitesAreSatisfied",
+    displayName: "Frame prerequisites",
+    description:
+      "Validates that declared frame `<prerequisites>` are present and recommends their use for cross-file references.",
+  },
+  {
     name: "netexUniqueConstraints",
     displayName: "Uniqueness constraints",
     description:
-      "Validates `xsd:unique` constraints from the NeTEx schema \u2014 no duplicate keys within each document.",
+      "Validates `xsd:unique` constraints from the NeTEx schema \u2014 no duplicate keys within each document, and across frames linked by `<prerequisites>`.",
   },
 ];
 

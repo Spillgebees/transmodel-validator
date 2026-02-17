@@ -42,6 +42,8 @@ export interface ValidationError {
   line?: number;
   /** 1-based column number in the source XML, if available. */
   column?: number;
+  /** Source file name (set by cross-document rules for per-file attribution). */
+  fileName?: string;
 }
 
 /** Validation result for a single file. */

@@ -2,7 +2,12 @@
  * Rule: everyLineIsReferenced
  *
  * Every Line element in ServiceFrame/lines must be referenced by at least
- * one LineRef element somewhere in the document.
+ * one LineRef element somewhere across all documents in the dataset.
+ *
+ * NOTE: This is a cross-document rule. LineRef values are collected from ALL
+ * documents first, then each Line definition is checked against the merged set.
+ * This avoids false positives when Line definitions and their references live
+ * in separate files (which is valid in NeTEx).
  */
 
 import { consistencyError } from "../../errors.js";
@@ -16,20 +21,25 @@ export const everyLineIsReferenced: Rule = {
   name: RULE_NAME,
   displayName: "`Line` references",
   description:
-    "Every `Line` must be referenced by at least one `LineRef` in the document.",
+    "Every `Line` must be referenced by at least one `LineRef` across all documents.",
   formats: ["netex"],
 
   async run(documents: DocumentInput[]): Promise<ValidationError[]> {
     const errors: ValidationError[] = [];
 
+    // First pass: collect ALL LineRef @ref values across all documents.
+    const refValues = new Set<string>();
+    for (const doc of documents) {
+      const lineRefs = findAll(doc.xml, "LineRef");
+      for (const r of lineRefs) {
+        const ref = getAttr(r.openTag, "ref");
+        if (ref) refValues.add(ref);
+      }
+    }
+
+    // Second pass: check each Line definition against the merged set.
     for (const doc of documents) {
       const lines = findNeTExElements(doc.xml, LINES);
-
-      // Pre-collect all LineRef @ref values in the document for fast lookup.
-      const lineRefs = findAll(doc.xml, "LineRef");
-      const refValues = new Set(
-        lineRefs.map((r) => getAttr(r.openTag, "ref")).filter(Boolean),
-      );
 
       for (const line of lines) {
         const id = getAttr(line.openTag, "id");
@@ -40,6 +50,7 @@ export const everyLineIsReferenced: Rule = {
               RULE_NAME,
               "`<Line>` is missing attribute `@id`",
               line.line,
+              doc.fileName,
             ),
           );
           continue;
@@ -51,6 +62,7 @@ export const everyLineIsReferenced: Rule = {
               RULE_NAME,
               `Missing reference for \`<Line id="${id}" />\``,
               line.line,
+              doc.fileName,
             ),
           );
         }

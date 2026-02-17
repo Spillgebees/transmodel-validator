@@ -14,6 +14,7 @@ import { everyStopPointHasArrivalAndDepartureTime } from "./netex/everyStopPoint
 import { frameDefaultsHaveALocaleAndTimeZone } from "./netex/frameDefaultsHaveALocaleAndTimeZone.js";
 import { locationsAreReferencingTheSamePoint } from "./netex/locationsAreReferencingTheSamePoint.js";
 import { netexKeyRefConstraints } from "./netex/netexKeyRefConstraints.js";
+import { netexPrerequisitesAreSatisfied } from "./netex/netexPrerequisitesAreSatisfied.js";
 import { netexUniqueConstraints } from "./netex/netexUniqueConstraints.js";
 import { passingTimesIsNotDecreasing } from "./netex/passingTimesIsNotDecreasing.js";
 import { stopPlaceQuayDistanceIsReasonable } from "./netex/stopPlaceQuayDistanceIsReasonable.js";
@@ -46,6 +47,7 @@ export const RULE_REGISTRY: ReadonlyMap<string, Rule> = new Map<string, Rule>([
   ],
   [passingTimesIsNotDecreasing.name, passingTimesIsNotDecreasing],
   [netexKeyRefConstraints.name, netexKeyRefConstraints],
+  [netexPrerequisitesAreSatisfied.name, netexPrerequisitesAreSatisfied],
   [netexUniqueConstraints.name, netexUniqueConstraints],
 ]);
 
@@ -62,6 +64,7 @@ export const NETEX_RULE_NAMES: readonly string[] = [
   locationsAreReferencingTheSamePoint.name,
   passingTimesIsNotDecreasing.name,
   netexKeyRefConstraints.name,
+  netexPrerequisitesAreSatisfied.name,
   netexUniqueConstraints.name,
 ];
 
