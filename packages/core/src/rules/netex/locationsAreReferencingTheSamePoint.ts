@@ -5,6 +5,12 @@
  * ScheduledStopPoint and StopPlace are geographically close (within
  * a configurable threshold, default 100m).
  *
+ * NOTE: This is a cross-document rule. StopPlace and ScheduledStopPoint
+ * lookup maps are built from ALL documents first, then each
+ * PassengerStopAssignment is checked against the merged maps. This avoids
+ * false positives when definitions and assignments live in separate files
+ * (which is valid in NeTEx).
+ *
  * Note: StopPlace uses Centroid/Location/{Lat,Lon} while
  * ScheduledStopPoint uses Location/{Lat,Lon} (no Centroid wrapper).
  */
@@ -38,7 +44,7 @@ export const locationsAreReferencingTheSamePoint: Rule = {
   name: RULE_NAME,
   displayName: "Stop assignment locations",
   description:
-    "`ScheduledStopPoint` and `StopPlace` in a `PassengerStopAssignment` must be geographically close.",
+    "`ScheduledStopPoint` and `StopPlace` in a `PassengerStopAssignment` must be geographically close across all documents.",
   formats: ["netex"],
 
   async run(
@@ -51,11 +57,20 @@ export const locationsAreReferencingTheSamePoint: Rule = {
         : DEFAULT_DISTANCE_THRESHOLD;
     const errors: ValidationError[] = [];
 
+    // First pass: build global maps from all documents.
+    const stopPlaceMap = new Map<string, GeoPoint>();
+    const sspMap = new Map<string, GeoPoint>();
     for (const doc of documents) {
-      // Build lookup maps for StopPlaces and ScheduledStopPoints.
-      const stopPlaceMap = buildStopPlaceMap(doc.xml);
-      const sspMap = buildScheduledStopPointMap(doc.xml);
+      for (const [id, point] of buildStopPlaceMap(doc.xml)) {
+        stopPlaceMap.set(id, point);
+      }
+      for (const [id, point] of buildScheduledStopPointMap(doc.xml)) {
+        sspMap.set(id, point);
+      }
+    }
 
+    // Second pass: check assignments from all documents.
+    for (const doc of documents) {
       const assignments = findNeTExElements(doc.xml, STOP_ASSIGNMENTS);
 
       for (const assignment of assignments) {
@@ -77,6 +92,7 @@ export const locationsAreReferencingTheSamePoint: Rule = {
               RULE_NAME,
               `Missing \`<ScheduledStopPoint>\` for \`<PassengerStopAssignment id="${assignId}" />\``,
               assignment.line,
+              doc.fileName,
             ),
           );
           continue;
@@ -98,6 +114,7 @@ export const locationsAreReferencingTheSamePoint: Rule = {
               RULE_NAME,
               `Missing \`<StopPlace>\` for \`<PassengerStopAssignment id="${assignId}" />\``,
               assignment.line,
+              doc.fileName,
             ),
           );
           continue;
@@ -123,6 +140,7 @@ export const locationsAreReferencingTheSamePoint: Rule = {
               `\`<ScheduledStopPoint>\` and \`<StopPlace>\` are too far apart ` +
                 `(\`<PassengerStopAssignment id="${assignId}" />\`, distance: **${distance}m**)`,
               assignment.line,
+              doc.fileName,
             ),
           );
         }

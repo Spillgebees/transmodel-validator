@@ -35,6 +35,7 @@ import type {
 const CROSS_DOC_RULES = new Set([
   "everyLineIsReferenced",
   "everyStopPlaceIsReferenced",
+  "locationsAreReferencingTheSamePoint",
   "netexKeyRefConstraints",
   "netexUniqueConstraints",
 ]);
