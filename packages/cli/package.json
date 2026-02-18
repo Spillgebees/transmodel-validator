@@ -19,8 +19,8 @@
     "@transmodel-validator/shared": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^25.2.3",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "@types/node": "25.2.3",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
   }
 }
