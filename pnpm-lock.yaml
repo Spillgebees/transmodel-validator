@@ -269,8 +269,8 @@ importers:
         specifier: 7.3.7
         version: 7.3.7(@types/node@25.9.9)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.21.0)
       vite-tsconfig-paths:
-        specifier: 4.3.2
-        version: 4.3.2(typescript@7.0.2)(vite@7.3.7(@types/node@25.9.9)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.21.0))
+        specifier: 6.1.1
+        version: 6.1.1(typescript@7.0.2)(vite@7.3.7(@types/node@25.9.9)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.21.0))
 
 packages:
 
@@ -1816,13 +1816,10 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  vite-tsconfig-paths@4.3.2:
-    resolution: {integrity: sha512-0Vd/a6po6Q+86rPlntHye7F31zA2URZMbH8M3saAZ/xR9QoGN/L21bxEGfXdWmFdNkqPpRdxFT7nmNe12e9/uA==}
+  vite-tsconfig-paths@6.1.1:
+    resolution: {integrity: sha512-2cihq7zliibCCZ8P9cKJrQBkfgdvcFkOOc3Y02o3GWUDLgqjWsZudaoiuOwO/gzTzy17cS5F7ZPo4bsnS4DGkg==}
     peerDependencies:
       vite: '*'
-    peerDependenciesMeta:
-      vite:
-        optional: true
 
   vite@7.3.7:
     resolution: {integrity: sha512-AHEzTORMbi7/7aXp7w7KZ5+DCUdSeLsJz0grY8xHpc9DHdYb0vQu6DqJfm2tOw3gDExNgPgnJTXxM6syYFHaCA==}
@@ -3283,12 +3280,11 @@ snapshots:
     dependencies:
       react: 19.3.1
 
-  vite-tsconfig-paths@4.3.2(typescript@7.0.2)(vite@7.3.7(@types/node@25.9.9)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.21.0)):
+  vite-tsconfig-paths@6.1.1(typescript@7.0.2)(vite@7.3.7(@types/node@25.9.9)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.21.0)):
     dependencies:
       debug: 4.4.3
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@7.0.2)
-    optionalDependencies:
       vite: 7.3.7(@types/node@25.9.9)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.21.0)
     transitivePeerDependencies:
       - supports-color
