@@ -11,7 +11,7 @@
     "test": "echo 'No tests yet'"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.159.5",
+    "@tanstack/react-router": "^1.170.41",
     "@tanstack/react-start": "^1.159.5",
     "@transmodel-validator/core": "workspace:*",
     "@transmodel-validator/shared": "workspace:*",
