@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@transmodel-validator/shared": "workspace:*",
-    "libxml2-wasm": "^0.6.0"
+    "libxml2-wasm": "^0.7.0"
   },
   "devDependencies": {
     "@types/node": "25.2.3",
