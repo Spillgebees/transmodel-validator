@@ -241,8 +241,8 @@ importers:
         specifier: ^19.1.0
         version: 19.3.1(react@19.3.1)
       srvx:
-        specifier: ^0.11.4
-        version: 0.11.13
+        specifier: ^1.0.0
+        version: 1.0.7
     devDependencies:
       '@tailwindcss/vite':
         specifier: 4.3.3
@@ -1697,11 +1697,6 @@ packages:
   source-map@0.7.6:
     resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
     engines: {node: '>= 12'}
-
-  srvx@0.11.13:
-    resolution: {integrity: sha512-oknN6qduuMPafxKtHucUeG32Q963pjriA5g3/Bl05cwEsUe5VVbIU4qR9LrALHbipSCyBe+VmfDGGydqazDRkw==}
-    engines: {node: '>=20.16.0'}
-    hasBin: true
 
   srvx@0.11.22:
     resolution: {integrity: sha512-LqZxxBDMKuMAZzFzJnDCkFOrs9MZQZr0LvHiO/SuSZVdQaXD7xQ5UWTUxheJrQPve1qk9MG2B/yttUvJxw8egQ==}
@@ -3199,8 +3194,6 @@ snapshots:
   source-map-js@1.2.1: {}
 
   source-map@0.7.6: {}
-
-  srvx@0.11.13: {}
 
   srvx@0.11.22: {}
 
