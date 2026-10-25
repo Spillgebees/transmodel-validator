@@ -11,7 +11,7 @@ import { createServerFn } from "@tanstack/react-start";
  * Returns relative paths so the user can pick the root/entry XSD.
  */
 export const listSchemaXsdFiles = createServerFn({ method: "POST" })
-  .inputValidator((data: { base64: string; fileName: string }) => data)
+  .validator((data: { base64: string; fileName: string }) => data)
   .handler(async ({ data }) => {
     const { writeFile, mkdir, readdir, rm } = await import("node:fs/promises");
     const { tmpdir } = await import("node:os");
