@@ -232,8 +232,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       nitro:
-        specifier: npm:nitro-nightly@3.0.1-20261023-052727-7e9a0481
-        version: nitro-nightly@3.0.1-20261023-052727-7e9a0481
+        specifier: npm:nitro-nightly@3.0.1-20261024-005652-6bccaad1
+        version: nitro-nightly@3.0.1-20261024-005652-6bccaad1
       react:
         specifier: ^19.1.0
         version: 19.3.1
@@ -1272,8 +1272,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nitro-nightly@3.0.1-20261023-052727-7e9a0481:
-    resolution: {integrity: sha512-9XElAldyN7V8Vnet6aM3jWY1YFM0xrOoRp585h0dI9vG3w7ntrvzRvbywiclzjW5gZ5W40KR9GaKp1wOTxPYYw==}
+  nitro-nightly@3.0.1-20261024-005652-6bccaad1:
+    resolution: {integrity: sha512-AJ31BZWNg7k47ThA3rE+i7axPSC2s+yGsUMWTdl3FyHThaYzm0cb2hVqR2qU260NWz0qIGBCpBQj0Gk6qKzNLQ==}
     engines: {node: '>=22.22.0'}
     hasBin: true
 
@@ -2397,7 +2397,7 @@ snapshots:
 
   nanoid@3.3.20: {}
 
-  nitro-nightly@3.0.1-20261023-052727-7e9a0481:
+  nitro-nightly@3.0.1-20261024-005652-6bccaad1:
     dependencies:
       crossws: 0.4.16(srvx@1.0.7)
       env-runner: 0.3.8
