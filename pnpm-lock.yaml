@@ -232,8 +232,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       nitro:
-        specifier: npm:nitro-nightly@3.0.1-20261024-005652-6bccaad1
-        version: nitro-nightly@3.0.1-20261024-005652-6bccaad1
+        specifier: npm:nitro-nightly@3.0.1-20261027-172659-6d3911d6
+        version: nitro-nightly@3.0.1-20261027-172659-6d3911d6
       react:
         specifier: ^19.1.0
         version: 19.3.1
@@ -982,8 +982,8 @@ packages:
   cookie-es@3.1.1:
     resolution: {integrity: sha512-UaXxwISYJPTr9hwQxMFYZ7kNhSXboMXP+Z3TRX6f1/NyaGPfuNUZOWP1pUEb75B2HjfklIYLVRfWiFZJyC6Npg==}
 
-  crossws@0.4.16:
-    resolution: {integrity: sha512-gKc2u346c6tZazImz8/4KkRRKW6cEHot3Z3+gzKNSkfHTWkYrXeiidMKYN0JnHqeszIs5++iDaVzP/pWl/efpw==}
+  crossws@0.4.17:
+    resolution: {integrity: sha512-YG2kyfafNXKmu7e6k64yrj6whrw7m5sBIsOSXOlJ/72X3TQWRQuw8DhvXFDcBk8HF77PnTSygnm7xpYCTnFpow==}
     peerDependencies:
       srvx: '>=0.11.5'
     peerDependenciesMeta:
@@ -1017,8 +1017,8 @@ packages:
     resolution: {integrity: sha512-9vhedylFonb2YGogzUKX6+Ja72gOJbN1QHAqdrvqLwhdl/QWbKopzoUC9EbQNVsAns/bx/4uyqalrQAoy1IByw==}
     engines: {node: '>=10.13.0'}
 
-  env-runner@0.3.8:
-    resolution: {integrity: sha512-WF/tEXA/LSE7na7k2T6STXw8aEOAt1tqxextaJH7RZnqZzqSrFVCyFKEU3r0dLgqgu55Kswo5TvkOLuGxz72VQ==}
+  env-runner@0.3.10:
+    resolution: {integrity: sha512-DOmiJsUH4gUIdLIvTZhO0UmXSPTM6pQbU7hdBt9rfHZQuUaXtGrGOXyL+zfCWuV972q1eF0wjiaVbCjhRM3WeQ==}
     hasBin: true
 
   es-module-lexer@2.3.2:
@@ -1272,8 +1272,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nitro-nightly@3.0.1-20261024-005652-6bccaad1:
-    resolution: {integrity: sha512-AJ31BZWNg7k47ThA3rE+i7axPSC2s+yGsUMWTdl3FyHThaYzm0cb2hVqR2qU260NWz0qIGBCpBQj0Gk6qKzNLQ==}
+  nitro-nightly@3.0.1-20261027-172659-6d3911d6:
+    resolution: {integrity: sha512-gg/ltwH3FtRZ+lztWY/wl0YJjHJ/LFSKOMphv+BFpqQl2NcbHXv0lN0LX3cVFqJWeRODXaa2qJ1Z2D8Yv5OeZw==}
     engines: {node: '>=22.22.0'}
     hasBin: true
 
@@ -1356,6 +1356,11 @@ packages:
 
   srvx@1.0.7:
     resolution: {integrity: sha512-8h30Qy2cpYkcXgByHNpV4+jp609bU3ic7MqnfyLQ2Fpa8BgjIaI2zfsDKAIbwm8DcYDrCLqm5izF5KeL2nxdvg==}
+    engines: {node: '>=20.16.0'}
+    hasBin: true
+
+  srvx@1.0.8:
+    resolution: {integrity: sha512-ngFS/J6St4PJfHRHGjr78xkPPtbyXtdMOLNE4x/XZunEK3OhV7aGUWMHf9WTUEy6wm1U0W4okkd82ZFFWRVQTw==}
     engines: {node: '>=20.16.0'}
     hasBin: true
 
@@ -2206,9 +2211,13 @@ snapshots:
 
   cookie-es@3.1.1: {}
 
-  crossws@0.4.16(srvx@1.0.7):
+  crossws@0.4.17(srvx@1.0.7):
     optionalDependencies:
       srvx: 1.0.7
+
+  crossws@0.4.17(srvx@1.0.8):
+    optionalDependencies:
+      srvx: 1.0.8
 
   csstype@3.2.3: {}
 
@@ -2227,9 +2236,9 @@ snapshots:
       graceful-fs: 4.2.11
       tapable: 2.3.3
 
-  env-runner@0.3.8:
+  env-runner@0.3.10:
     dependencies:
-      crossws: 0.4.16(srvx@1.0.7)
+      crossws: 0.4.17(srvx@1.0.7)
       srvx: 1.0.7
 
   es-module-lexer@2.3.2: {}
@@ -2259,12 +2268,12 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  h3@2.0.8(crossws@0.4.16(srvx@1.0.7))(ocache@0.3.1):
+  h3@2.0.8(crossws@0.4.17(srvx@1.0.8))(ocache@0.3.1):
     dependencies:
       rou3: 1.0.0
       srvx: 1.0.7
     optionalDependencies:
-      crossws: 0.4.16(srvx@1.0.7)
+      crossws: 0.4.17(srvx@1.0.8)
       ocache: 0.3.1
 
   isbot@5.2.2: {}
@@ -2397,14 +2406,14 @@ snapshots:
 
   nanoid@3.3.20: {}
 
-  nitro-nightly@3.0.1-20261024-005652-6bccaad1:
+  nitro-nightly@3.0.1-20261027-172659-6d3911d6:
     dependencies:
-      crossws: 0.4.16(srvx@1.0.7)
-      env-runner: 0.3.8
-      h3: 2.0.8(crossws@0.4.16(srvx@1.0.7))(ocache@0.3.1)
+      crossws: 0.4.17(srvx@1.0.8)
+      env-runner: 0.3.10
+      h3: 2.0.8(crossws@0.4.17(srvx@1.0.8))(ocache@0.3.1)
       ocache: 0.3.1
       rou3: 1.0.0
-      srvx: 1.0.7
+      srvx: 1.0.8
 
   node-releases@2.0.60: {}
 
@@ -2473,6 +2482,8 @@ snapshots:
   source-map@0.7.6: {}
 
   srvx@1.0.7: {}
+
+  srvx@1.0.8: {}
 
   std-env@4.3.0: {}
 
