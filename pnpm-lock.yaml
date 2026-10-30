@@ -242,7 +242,7 @@ importers:
         version: 19.3.1(react@19.3.1)
       srvx:
         specifier: ^1.0.0
-        version: 1.0.7
+        version: 1.0.8
     devDependencies:
       '@tailwindcss/vite':
         specifier: 4.3.3
@@ -1354,11 +1354,6 @@ packages:
     resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
     engines: {node: '>= 12'}
 
-  srvx@1.0.7:
-    resolution: {integrity: sha512-8h30Qy2cpYkcXgByHNpV4+jp609bU3ic7MqnfyLQ2Fpa8BgjIaI2zfsDKAIbwm8DcYDrCLqm5izF5KeL2nxdvg==}
-    engines: {node: '>=20.16.0'}
-    hasBin: true
-
   srvx@1.0.8:
     resolution: {integrity: sha512-ngFS/J6St4PJfHRHGjr78xkPPtbyXtdMOLNE4x/XZunEK3OhV7aGUWMHf9WTUEy6wm1U0W4okkd82ZFFWRVQTw==}
     engines: {node: '>=20.16.0'}
@@ -2038,7 +2033,7 @@ snapshots:
       picomatch: 4.0.7
       seroval: 1.7.2
       source-map: 0.7.6
-      srvx: 1.0.7
+      srvx: 1.0.8
       tinyglobby: 0.2.17
       ufo: 1.6.4
       vitefu: 1.1.3(vite@8.3.5(@types/node@25.9.9)(jiti@2.7.0))
@@ -2211,10 +2206,6 @@ snapshots:
 
   cookie-es@3.1.1: {}
 
-  crossws@0.4.17(srvx@1.0.7):
-    optionalDependencies:
-      srvx: 1.0.7
-
   crossws@0.4.17(srvx@1.0.8):
     optionalDependencies:
       srvx: 1.0.8
@@ -2238,8 +2229,8 @@ snapshots:
 
   env-runner@0.3.10:
     dependencies:
-      crossws: 0.4.17(srvx@1.0.7)
-      srvx: 1.0.7
+      crossws: 0.4.17(srvx@1.0.8)
+      srvx: 1.0.8
 
   es-module-lexer@2.3.2: {}
 
@@ -2271,7 +2262,7 @@ snapshots:
   h3@2.0.8(crossws@0.4.17(srvx@1.0.8))(ocache@0.3.1):
     dependencies:
       rou3: 1.0.0
-      srvx: 1.0.7
+      srvx: 1.0.8
     optionalDependencies:
       crossws: 0.4.17(srvx@1.0.8)
       ocache: 0.3.1
@@ -2480,8 +2471,6 @@ snapshots:
   source-map-js@1.2.2: {}
 
   source-map@0.7.6: {}
-
-  srvx@1.0.7: {}
 
   srvx@1.0.8: {}
 
