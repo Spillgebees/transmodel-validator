@@ -1,6 +1,11 @@
-FROM node:26-slim@sha256:e4db4c914bf8ad241bd24804fc25d272d89bad97e68cdc8a1414862790a02c39 AS deps
+FROM node:26-slim@sha256:e4db4c914bf8ad241bd24804fc25d272d89bad97e68cdc8a1414862790a02c39 AS base
 
-RUN corepack enable && corepack prepare pnpm@10.28.2 --activate
+# node 25+ no longer bundles corepack; it reads the pnpm version from packageManager in package.json
+# renovate: datasource=npm depName=corepack
+ARG COREPACK_VERSION=0.36.0
+RUN npm install --global corepack@${COREPACK_VERSION} && corepack enable
+
+FROM base AS deps
 
 WORKDIR /app
 
@@ -11,9 +16,7 @@ COPY packages/web/package.json packages/web/package.json
 
 RUN pnpm install --frozen-lockfile
 
-FROM node:26-slim@sha256:e4db4c914bf8ad241bd24804fc25d272d89bad97e68cdc8a1414862790a02c39 AS build
-
-RUN corepack enable && corepack prepare pnpm@10.28.2 --activate
+FROM base AS build
 
 WORKDIR /app
 
